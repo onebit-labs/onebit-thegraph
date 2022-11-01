@@ -1,0 +1,16 @@
+{
+  "goerli": {
+    "Onebit-USDT-1-LendingPool": {
+      "address": "0x7fa6222bc44d575f750f3cedc43c7224cc08b82b"
+    },
+    "Onebit-USDT-2-LendingPool": {
+      "address": "0x6bafba601ad936081de5b67b9c39ba2bff539dd6"
+    },
+    "Onebit-USDT-1-OToken": {
+      "address": "0xec5d20887706f3db4efa86949000a53f96f6c3b1"
+    },
+    "Onebit-USDT-2-OToken": {
+      "address": "0x11157633d159a0fbb421f54bc6d8b4cd77d44af2"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+type lendingPool @entity {
+  id: ID! # LendingPoolAddress
+  term: Int!
+  depositors: [Bytes!]!
+  lastUpdateTimestamp: Int!
+}
+
+type netValue @entity {
+  id: ID!
+  lendingPool: Bytes #LendingPoolAddress
+  value: BigInt!
+  createTimestamp: Int!
+}
+
+type transaction @entity {
+  id: ID!
+  lendingPool: Bytes #LendingPoolAddress
+  type: Int! # 1:deposit, 2:withdraw
+  account: Bytes! #LendingPoolAddress
+  amount: BigInt!
+  createTimestamp: Int!
+}
+
+type portfolioTerm @entity {
+  id: ID!
+  lendingPool: Bytes #LendingPoolAddress
+  value: BigInt!
+  term: Int!
+  createTimestamp: Int!
+  purchaseBeginTimestamp: Int!
+  purchaseEndTimestamp: Int!
+  previousLiquidityIndex: BigInt!
+  managementFeeRate: Int!
+  performanceFeeRate: Int!
+}
