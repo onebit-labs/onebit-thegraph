@@ -27,9 +27,11 @@ type portfolioTerm @entity {
   value: BigInt!
   term: Int!
   createTimestamp: Int!
+  redemptionBeginTimestamp: Int!
   purchaseBeginTimestamp: Int!
   purchaseEndTimestamp: Int!
   previousLiquidityIndex: BigInt!
   managementFeeRate: Int!
   performanceFeeRate: Int!
+  previousDepositors: Int!
 }

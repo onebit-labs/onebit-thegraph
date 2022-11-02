@@ -297,6 +297,15 @@ export class portfolioTerm extends Entity {
     this.set("createTimestamp", Value.fromI32(value));
   }
 
+  get redemptionBeginTimestamp(): i32 {
+    let value = this.get("redemptionBeginTimestamp");
+    return value!.toI32();
+  }
+
+  set redemptionBeginTimestamp(value: i32) {
+    this.set("redemptionBeginTimestamp", Value.fromI32(value));
+  }
+
   get purchaseBeginTimestamp(): i32 {
     let value = this.get("purchaseBeginTimestamp");
     return value!.toI32();
@@ -340,5 +349,14 @@ export class portfolioTerm extends Entity {
 
   set performanceFeeRate(value: i32) {
     this.set("performanceFeeRate", Value.fromI32(value));
+  }
+
+  get previousDepositors(): i32 {
+    let value = this.get("previousDepositors");
+    return value!.toI32();
+  }
+
+  set previousDepositors(value: i32) {
+    this.set("previousDepositors", Value.fromI32(value));
   }
 }
