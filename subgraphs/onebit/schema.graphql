@@ -20,7 +20,7 @@ type transaction @entity {
   id: ID!
   lendingPool: Bytes #LendingPoolAddress
   type: Int! # 1:deposit, 2:withdraw
-  account: Bytes! #LendingPoolAddress
+  account: Bytes!
   amount: BigInt!
   createTimestamp: Int!
 }
@@ -38,4 +38,13 @@ type portfolioTerm @entity {
   managementFeeRate: Int!
   performanceFeeRate: Int!
   previousDepositors: Int!
+}
+
+type depositor @entity {
+  id: ID! #lendingPool+account
+  account: Bytes!
+  lendingPool: Bytes! #LendingPoolAddress
+  balanceOf: BigInt!
+  createTimestamp: Int!
+  lastUpdateTimestamp: Int!
 }

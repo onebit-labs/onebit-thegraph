@@ -1,4 +1,4 @@
-import { Bytes, BigInt } from '@graphprotocol/graph-ts'
+import { Bytes, BigInt, crypto, ByteArray } from '@graphprotocol/graph-ts'
 import {
   LendingPool,
   Deposit,
@@ -11,7 +11,7 @@ import {
   Unpaused,
   Withdraw
 } from "../generated/Onebit-USDT-1-LendingPool/LendingPool"
-import { transaction, lendingPool, portfolioTerm, netValue } from "../generated/schema"
+import { transaction, lendingPool, portfolioTerm, netValue, depositor } from "../generated/schema"
 
 function pushDepositor(pool: lendingPool, value: Bytes): void {
   const array = pool.depositors
@@ -29,6 +29,12 @@ function removeDepositor(pool: lendingPool, value: Bytes): void {
     array.push(pool.depositors[i])
   }
   pool.depositors = array
+}
+
+function getDepositorId(lendingPoolAddress: Bytes, accountAddress: Bytes): string {
+  const lendingPool = lendingPoolAddress.toHexString()
+  const account = accountAddress.toHexString()
+  return crypto.keccak256(ByteArray.fromUTF8(lendingPool + account)).toHexString()
 }
 
 export function handleDeposit(event: Deposit): void {
@@ -81,6 +87,19 @@ export function handleDeposit(event: Deposit): void {
     poolRecord.lastUpdateTimestamp = event.block.timestamp.toI32()
     pushDepositor(poolRecord, record.account)
     poolRecord.save()
+
+    const depositorId = getDepositorId(lendingPoolAddress, record.account)
+    let depositorRecord = depositor.load(depositorId)
+    if (!depositorRecord) {
+      depositorRecord = new depositor(depositorId)
+      depositorRecord.balanceOf = BigInt.fromI32(0)
+      depositorRecord.account = record.account
+      depositorRecord.lendingPool = lendingPoolAddress
+      depositorRecord.createTimestamp = event.block.timestamp.toI32()
+    }
+    depositorRecord.balanceOf = depositorRecord.balanceOf.plus(record.amount)
+    depositorRecord.lastUpdateTimestamp = event.block.timestamp.toI32()
+    depositorRecord.save()
   }
 }
 
@@ -105,6 +124,20 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
   record.currentLiquidityRate = event.params.currentLiquidityRate
   record.createTimestamp = event.block.timestamp.toI32()
   record.save()
+
+  const lendingPoolAddress = event.transaction.to
+  if (!lendingPoolAddress) return
+  const poolId = lendingPoolAddress.toHexString()
+  const poolRecord = lendingPool.load(poolId)
+  if (!poolRecord) return
+  for (let i = 0; i < poolRecord.depositors.length; i++) {
+    const depositorId = getDepositorId(lendingPoolAddress, poolRecord.depositors[i])
+    const depositorRecord = depositor.load(depositorId)
+    if (!depositorRecord) continue
+    depositorRecord.balanceOf = depositorRecord.balanceOf.times(record.newNetValue)
+    depositorRecord.lastUpdateTimestamp = event.block.timestamp.toI32()
+    depositorRecord.save()
+  }
 }
 
 export function handlePaused(event: Paused): void { }
@@ -157,4 +190,22 @@ export function handleWithdraw(event: Withdraw): void {
   record.createTimestamp = event.block.timestamp.toI32()
 
   record.save()
+
+  const lendingPoolAddress = event.transaction.to
+  if (!lendingPoolAddress) return
+  const depositorId = getDepositorId(lendingPoolAddress, record.account)
+  let depositorRecord = depositor.load(depositorId)
+  if (depositorRecord) {
+    depositorRecord.balanceOf = depositorRecord.balanceOf.minus(record.amount)
+    depositorRecord.lastUpdateTimestamp = event.block.timestamp.toI32()
+    depositorRecord.save()
+
+    if (depositorRecord.balanceOf.isZero()) {
+      const poolId = lendingPoolAddress.toHexString()
+      let poolRecord = lendingPool.load(poolId)
+      if (!poolRecord) return
+      removeDepositor(poolRecord, record.account)
+      poolRecord.save()
+    }
+  }
 }

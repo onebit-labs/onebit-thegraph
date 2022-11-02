@@ -396,3 +396,80 @@ export class portfolioTerm extends Entity {
     this.set("previousDepositors", Value.fromI32(value));
   }
 }
+
+export class depositor extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save depositor entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.STRING,
+        `Entities of type depositor must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("depositor", id.toString(), this);
+    }
+  }
+
+  static load(id: string): depositor | null {
+    return changetype<depositor | null>(store.get("depositor", id));
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value!.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get account(): Bytes {
+    let value = this.get("account");
+    return value!.toBytes();
+  }
+
+  set account(value: Bytes) {
+    this.set("account", Value.fromBytes(value));
+  }
+
+  get lendingPool(): Bytes {
+    let value = this.get("lendingPool");
+    return value!.toBytes();
+  }
+
+  set lendingPool(value: Bytes) {
+    this.set("lendingPool", Value.fromBytes(value));
+  }
+
+  get balanceOf(): BigInt {
+    let value = this.get("balanceOf");
+    return value!.toBigInt();
+  }
+
+  set balanceOf(value: BigInt) {
+    this.set("balanceOf", Value.fromBigInt(value));
+  }
+
+  get createTimestamp(): i32 {
+    let value = this.get("createTimestamp");
+    return value!.toI32();
+  }
+
+  set createTimestamp(value: i32) {
+    this.set("createTimestamp", Value.fromI32(value));
+  }
+
+  get lastUpdateTimestamp(): i32 {
+    let value = this.get("lastUpdateTimestamp");
+    return value!.toI32();
+  }
+
+  set lastUpdateTimestamp(value: i32) {
+    this.set("lastUpdateTimestamp", Value.fromI32(value));
+  }
+}
