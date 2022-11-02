@@ -11,7 +11,7 @@ import {
   Unpaused,
   Withdraw
 } from "../generated/Onebit-USDT-1-LendingPool/LendingPool"
-import { transaction, lendingPool, portfolioTerm } from "../generated/schema"
+import { transaction, lendingPool, portfolioTerm, netValue } from "../generated/schema"
 
 function pushDepositor(pool: lendingPool, value: Bytes): void {
   const array = pool.depositors
@@ -90,7 +90,22 @@ export function handleFundDeposit(event: FundDeposit): void { }
 
 export function handleFundWithdraw(event: FundWithdraw): void { }
 
-export function handleNetValueUpdated(event: NetValueUpdated): void { }
+export function handleNetValueUpdated(event: NetValueUpdated): void {
+  const id = event.transaction.hash.toHexString()
+  let record = netValue.load(id)
+  if (!record) {
+    record = new netValue(id)
+  }
+
+  record.lendingPool = event.transaction.to
+  record.previousNetValue = event.params.previousNetValue
+  record.newNetValue = event.params.newNetValue
+  record.previousLiquidityIndex = event.params.previousLiquidityIndex
+  record.newLiquidityIndex = event.params.newLiquidityIndex
+  record.currentLiquidityRate = event.params.currentLiquidityRate
+  record.createTimestamp = event.block.timestamp.toI32()
+  record.save()
+}
 
 export function handlePaused(event: Paused): void { }
 

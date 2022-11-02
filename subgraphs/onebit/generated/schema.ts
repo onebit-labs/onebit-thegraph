@@ -118,13 +118,49 @@ export class netValue extends Entity {
     }
   }
 
-  get value(): BigInt {
-    let value = this.get("value");
+  get previousNetValue(): BigInt {
+    let value = this.get("previousNetValue");
     return value!.toBigInt();
   }
 
-  set value(value: BigInt) {
-    this.set("value", Value.fromBigInt(value));
+  set previousNetValue(value: BigInt) {
+    this.set("previousNetValue", Value.fromBigInt(value));
+  }
+
+  get newNetValue(): BigInt {
+    let value = this.get("newNetValue");
+    return value!.toBigInt();
+  }
+
+  set newNetValue(value: BigInt) {
+    this.set("newNetValue", Value.fromBigInt(value));
+  }
+
+  get previousLiquidityIndex(): BigInt {
+    let value = this.get("previousLiquidityIndex");
+    return value!.toBigInt();
+  }
+
+  set previousLiquidityIndex(value: BigInt) {
+    this.set("previousLiquidityIndex", Value.fromBigInt(value));
+  }
+
+  get newLiquidityIndex(): BigInt {
+    let value = this.get("newLiquidityIndex");
+    return value!.toBigInt();
+  }
+
+  set newLiquidityIndex(value: BigInt) {
+    this.set("newLiquidityIndex", Value.fromBigInt(value));
+  }
+
+  get currentLiquidityRate(): BigInt {
+    let value = this.get("currentLiquidityRate");
+    return value!.toBigInt();
+  }
+
+  set currentLiquidityRate(value: BigInt) {
+    this.set("currentLiquidityRate", Value.fromBigInt(value));
   }
 
   get createTimestamp(): i32 {

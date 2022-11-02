@@ -8,7 +8,11 @@ type lendingPool @entity {
 type netValue @entity {
   id: ID!
   lendingPool: Bytes #LendingPoolAddress
-  value: BigInt!
+  previousNetValue: BigInt!
+  newNetValue: BigInt!
+  previousLiquidityIndex: BigInt!
+  newLiquidityIndex: BigInt!
+  currentLiquidityRate: BigInt!
   createTimestamp: Int!
 }
 
