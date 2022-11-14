@@ -68,6 +68,24 @@ export class lendingPool extends Entity {
   set lastUpdateTimestamp(value: i32) {
     this.set("lastUpdateTimestamp", Value.fromI32(value));
   }
+
+  get liquidityRate(): BigInt {
+    let value = this.get("liquidityRate");
+    return value!.toBigInt();
+  }
+
+  set liquidityRate(value: BigInt) {
+    this.set("liquidityRate", Value.fromBigInt(value));
+  }
+
+  get oTokenAddress(): Bytes {
+    let value = this.get("oTokenAddress");
+    return value!.toBytes();
+  }
+
+  set oTokenAddress(value: Bytes) {
+    this.set("oTokenAddress", Value.fromBytes(value));
+  }
 }
 
 export class netValue extends Entity {
@@ -446,13 +464,13 @@ export class depositor extends Entity {
     this.set("lendingPool", Value.fromBytes(value));
   }
 
-  get balanceOf(): BigInt {
-    let value = this.get("balanceOf");
-    return value!.toBigInt();
+  get oTokenAddress(): Bytes {
+    let value = this.get("oTokenAddress");
+    return value!.toBytes();
   }
 
-  set balanceOf(value: BigInt) {
-    this.set("balanceOf", Value.fromBigInt(value));
+  set oTokenAddress(value: Bytes) {
+    this.set("oTokenAddress", Value.fromBytes(value));
   }
 
   get createTimestamp(): i32 {

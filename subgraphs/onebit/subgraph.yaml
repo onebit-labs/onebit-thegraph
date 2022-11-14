@@ -27,6 +27,8 @@ dataSources:
       abis:
         - name: LendingPool
           file: ./abis/LendingPool.json
+        - name: OToken
+          file: ./abis/OToken.json
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
           handler: handleDeposit
@@ -76,6 +78,8 @@ dataSources:
       abis:
         - name: LendingPool
           file: ./abis/LendingPool.json
+        - name: OToken
+          file: ./abis/OToken.json
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
           handler: handleDeposit
@@ -125,6 +129,8 @@ dataSources:
       abis:
         - name: LendingPool
           file: ./abis/LendingPool.json
+        - name: OToken
+          file: ./abis/OToken.json
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
           handler: handleDeposit
@@ -174,6 +180,8 @@ dataSources:
       abis:
         - name: LendingPool
           file: ./abis/LendingPool.json
+        - name: OToken
+          file: ./abis/OToken.json
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
           handler: handleDeposit

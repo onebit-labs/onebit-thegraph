@@ -1,4 +1,10 @@
-import { Bytes, BigInt, crypto, ByteArray } from "@graphprotocol/graph-ts";
+import {
+  Bytes,
+  BigInt,
+  crypto,
+  ByteArray,
+  Address,
+} from "@graphprotocol/graph-ts";
 import {
   LendingPool,
   Deposit,
@@ -13,6 +19,7 @@ import {
   PurchaseEndTimestampMoved,
   RedemptionBeginTimestampMoved,
 } from "../generated/Onebit-Lightning-Hunter-USDT/LendingPool";
+import { OToken } from "../generated/Onebit-Lightning-Hunter-USDT/OToken";
 import {
   transaction,
   lendingPool,
@@ -77,6 +84,9 @@ export function handleDeposit(event: Deposit): void {
       const contract = LendingPool.bind(lendingPoolAddress);
       const reserveData = contract.getReserveData();
 
+      poolRecord.oTokenAddress = reserveData.oTokenAddress;
+      poolRecord.liquidityRate = reserveData.currentLiquidityRate;
+
       let portfolioTermRecord = portfolioTerm.load(id);
       if (!portfolioTermRecord) {
         portfolioTermRecord = new portfolioTerm(id);
@@ -105,14 +115,13 @@ export function handleDeposit(event: Deposit): void {
     let depositorRecord = depositor.load(depositorId);
     if (!depositorRecord) {
       depositorRecord = new depositor(depositorId);
-      depositorRecord.balanceOf = BigInt.fromI32(0);
+      depositorRecord.oTokenAddress = poolRecord.oTokenAddress;
       depositorRecord.account = record.account;
       depositorRecord.lendingPool = lendingPoolAddress;
       depositorRecord.createTimestamp = event.block.timestamp.toI32();
+      depositorRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
+      depositorRecord.save();
     }
-    depositorRecord.balanceOf = depositorRecord.balanceOf.plus(record.amount);
-    depositorRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
-    depositorRecord.save();
   }
 }
 
@@ -143,19 +152,9 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
   const poolId = lendingPoolAddress.toHexString();
   const poolRecord = lendingPool.load(poolId);
   if (!poolRecord) return;
-  for (let i = 0; i < poolRecord.depositors.length; i++) {
-    const depositorId = getDepositorId(
-      lendingPoolAddress,
-      poolRecord.depositors[i]
-    );
-    const depositorRecord = depositor.load(depositorId);
-    if (!depositorRecord) continue;
-    depositorRecord.balanceOf = depositorRecord.balanceOf.times(
-      record.newNetValue
-    );
-    depositorRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
-    depositorRecord.save();
-  }
+  poolRecord.liquidityRate = record.currentLiquidityRate;
+  poolRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
+  poolRecord.save();
 }
 
 export function handlePaused(event: Paused): void {}
@@ -215,11 +214,11 @@ export function handleWithdraw(event: Withdraw): void {
   const depositorId = getDepositorId(lendingPoolAddress, record.account);
   let depositorRecord = depositor.load(depositorId);
   if (depositorRecord) {
-    depositorRecord.balanceOf = depositorRecord.balanceOf.minus(record.amount);
-    depositorRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
-    depositorRecord.save();
+    const oTokenAddress = Address.fromBytes(depositorRecord.oTokenAddress);
+    const OTokenContract = OToken.bind(oTokenAddress);
+    const balanceOf = OTokenContract.balanceOf(event.params.to);
 
-    if (depositorRecord.balanceOf.isZero()) {
+    if (balanceOf.isZero()) {
       const poolId = lendingPoolAddress.toHexString();
       let poolRecord = lendingPool.load(poolId);
       if (!poolRecord) return;
