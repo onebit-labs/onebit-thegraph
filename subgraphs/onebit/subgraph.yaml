@@ -3,10 +3,10 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum
-    name: Onebit-USDT-1-LendingPool
+    name: Onebit-Lightning-Hunter-USDT
     network: goerli
     source:
-      address: "0x7fa6222bc44d575f750f3cedc43c7224cc08b82b"
+      address: "0x780de295a0f6529b46b3cf0d1ddaeeca1bcbcb5c"
       abi: LendingPool
     mapping:
       kind: ethereum/events
@@ -20,6 +20,8 @@ dataSources:
         - NetValueUpdated
         - Paused
         - PeriodInitialized
+        - PurchaseEndTimestampMoved
+        - RedemptionBeginTimestampMoved
         - Unpaused
         - Withdraw
       abis:
@@ -34,22 +36,26 @@ dataSources:
           handler: handleFundDeposit
         - event: FundWithdraw(indexed address,uint256)
           handler: handleFundWithdraw
-        - event: NetValueUpdated(uint256,uint256,uint256,uint256,uint256)
+        - event: NetValueUpdated(uint256,uint256,uint256,uint256,int256)
           handler: handleNetValueUpdated
         - event: Paused()
           handler: handlePaused
         - event: PeriodInitialized(uint256,uint40,uint40,uint40,uint16,uint16)
           handler: handlePeriodInitialized
+        - event: PurchaseEndTimestampMoved(uint40,uint40)
+          handler: handlePurchaseEndTimestampMoved
+        - event: RedemptionBeginTimestampMoved(uint40,uint40)
+          handler: handleRedemptionBeginTimestampMoved
         - event: Unpaused()
           handler: handleUnpaused
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
       file: ./src/lending-pool.ts
   - kind: ethereum
-    name: Onebit-USDT-2-LendingPool
+    name: Onebit-Smart-Trend-USDT
     network: goerli
     source:
-      address: "0x6bafba601ad936081de5b67b9c39ba2bff539dd6"
+      address: "0x45bebd42650e792eda35f02855113090cdcb2a79"
       abi: LendingPool
     mapping:
       kind: ethereum/events
@@ -63,6 +69,8 @@ dataSources:
         - NetValueUpdated
         - Paused
         - PeriodInitialized
+        - PurchaseEndTimestampMoved
+        - RedemptionBeginTimestampMoved
         - Unpaused
         - Withdraw
       abis:
@@ -77,22 +85,26 @@ dataSources:
           handler: handleFundDeposit
         - event: FundWithdraw(indexed address,uint256)
           handler: handleFundWithdraw
-        - event: NetValueUpdated(uint256,uint256,uint256,uint256,uint256)
+        - event: NetValueUpdated(uint256,uint256,uint256,uint256,int256)
           handler: handleNetValueUpdated
         - event: Paused()
           handler: handlePaused
         - event: PeriodInitialized(uint256,uint40,uint40,uint40,uint16,uint16)
           handler: handlePeriodInitialized
+        - event: PurchaseEndTimestampMoved(uint40,uint40)
+          handler: handlePurchaseEndTimestampMoved
+        - event: RedemptionBeginTimestampMoved(uint40,uint40)
+          handler: handleRedemptionBeginTimestampMoved
         - event: Unpaused()
           handler: handleUnpaused
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
       file: ./src/lending-pool.ts
   - kind: ethereum
-    name: Onebit-USDT-3-LendingPool
+    name: Onebit-Smart-Trend-BTC
     network: goerli
     source:
-      address: "0xd617314aefc7e787f02b2090cc8b3e4224b8a69a"
+      address: "0x237d0588c4b4f89498d03458ddb66373e1b89c87"
       abi: LendingPool
     mapping:
       kind: ethereum/events
@@ -106,6 +118,8 @@ dataSources:
         - NetValueUpdated
         - Paused
         - PeriodInitialized
+        - PurchaseEndTimestampMoved
+        - RedemptionBeginTimestampMoved
         - Unpaused
         - Withdraw
       abis:
@@ -120,12 +134,65 @@ dataSources:
           handler: handleFundDeposit
         - event: FundWithdraw(indexed address,uint256)
           handler: handleFundWithdraw
-        - event: NetValueUpdated(uint256,uint256,uint256,uint256,uint256)
+        - event: NetValueUpdated(uint256,uint256,uint256,uint256,int256)
           handler: handleNetValueUpdated
         - event: Paused()
           handler: handlePaused
         - event: PeriodInitialized(uint256,uint40,uint40,uint40,uint16,uint16)
           handler: handlePeriodInitialized
+        - event: PurchaseEndTimestampMoved(uint40,uint40)
+          handler: handlePurchaseEndTimestampMoved
+        - event: RedemptionBeginTimestampMoved(uint40,uint40)
+          handler: handleRedemptionBeginTimestampMoved
+        - event: Unpaused()
+          handler: handleUnpaused
+        - event: Withdraw(indexed address,indexed address,uint256)
+          handler: handleWithdraw
+      file: ./src/lending-pool.ts
+  - kind: ethereum
+    name: Onebit-Smart-Trend-USDT-Demo
+    network: goerli
+    source:
+      address: "0x6633665728737d3aebe62a257802c14cca3e1ce4"
+      abi: LendingPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Deposit
+        - FundAddressUpdated
+        - FundDeposit
+        - FundWithdraw
+        - NetValueUpdated
+        - Paused
+        - PeriodInitialized
+        - PurchaseEndTimestampMoved
+        - RedemptionBeginTimestampMoved
+        - Unpaused
+        - Withdraw
+      abis:
+        - name: LendingPool
+          file: ./abis/LendingPool.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
+          handler: handleDeposit
+        - event: FundAddressUpdated(indexed address)
+          handler: handleFundAddressUpdated
+        - event: FundDeposit(indexed address,uint256)
+          handler: handleFundDeposit
+        - event: FundWithdraw(indexed address,uint256)
+          handler: handleFundWithdraw
+        - event: NetValueUpdated(uint256,uint256,uint256,uint256,int256)
+          handler: handleNetValueUpdated
+        - event: Paused()
+          handler: handlePaused
+        - event: PeriodInitialized(uint256,uint40,uint40,uint40,uint16,uint16)
+          handler: handlePeriodInitialized
+        - event: PurchaseEndTimestampMoved(uint40,uint40)
+          handler: handlePurchaseEndTimestampMoved
+        - event: RedemptionBeginTimestampMoved(uint40,uint40)
+          handler: handleRedemptionBeginTimestampMoved
         - event: Unpaused()
           handler: handleUnpaused
         - event: Withdraw(indexed address,indexed address,uint256)

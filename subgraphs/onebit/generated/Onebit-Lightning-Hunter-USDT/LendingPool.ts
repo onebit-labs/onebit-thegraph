@@ -188,6 +188,50 @@ export class PeriodInitialized__Params {
   }
 }
 
+export class PurchaseEndTimestampMoved extends ethereum.Event {
+  get params(): PurchaseEndTimestampMoved__Params {
+    return new PurchaseEndTimestampMoved__Params(this);
+  }
+}
+
+export class PurchaseEndTimestampMoved__Params {
+  _event: PurchaseEndTimestampMoved;
+
+  constructor(event: PurchaseEndTimestampMoved) {
+    this._event = event;
+  }
+
+  get previousTimestamp(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get newTimetamp(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
+export class RedemptionBeginTimestampMoved extends ethereum.Event {
+  get params(): RedemptionBeginTimestampMoved__Params {
+    return new RedemptionBeginTimestampMoved__Params(this);
+  }
+}
+
+export class RedemptionBeginTimestampMoved__Params {
+  _event: RedemptionBeginTimestampMoved;
+
+  constructor(event: RedemptionBeginTimestampMoved) {
+    this._event = event;
+  }
+
+  get previousTimestamp(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get newTimetamp(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
 export class Unpaused extends ethereum.Event {
   get params(): Unpaused__Params {
     return new Unpaused__Params(this);
@@ -287,6 +331,10 @@ export class LendingPool__getReserveDataResultValue0Struct extends ethereum.Tupl
 
   get fundAddress(): Address {
     return this[12].toAddress();
+  }
+
+  get softUpperLimit(): BigInt {
+    return this[13].toBigInt();
   }
 }
 
@@ -416,7 +464,7 @@ export class LendingPool extends ethereum.SmartContract {
   getReserveData(): LendingPool__getReserveDataResultValue0Struct {
     let result = super.call(
       "getReserveData",
-      "getReserveData():(((uint256),uint128,uint128,uint128,uint128,uint40,uint40,uint40,uint40,uint16,uint16,address,address))",
+      "getReserveData():(((uint256),uint128,int128,uint128,uint128,uint40,uint40,uint40,uint40,uint16,uint16,address,address,uint128))",
       []
     );
 
@@ -430,7 +478,7 @@ export class LendingPool extends ethereum.SmartContract {
   > {
     let result = super.tryCall(
       "getReserveData",
-      "getReserveData():(((uint256),uint128,uint128,uint128,uint128,uint40,uint40,uint40,uint40,uint16,uint16,address,address))",
+      "getReserveData():(((uint256),uint128,int128,uint128,uint128,uint40,uint40,uint40,uint40,uint16,uint16,address,address,uint128))",
       []
     );
     if (result.reverted) {
@@ -720,16 +768,20 @@ export class InitializeNextPeriodCall__Inputs {
     return this._call.inputValues[2].value.toBigInt();
   }
 
-  get purchaseBeginTimestamp(): BigInt {
+  get softUpperLimit(): BigInt {
     return this._call.inputValues[3].value.toBigInt();
   }
 
-  get purchaseEndTimestamp(): BigInt {
+  get purchaseBeginTimestamp(): BigInt {
     return this._call.inputValues[4].value.toBigInt();
   }
 
-  get redemptionBeginTimestamp(): BigInt {
+  get purchaseEndTimestamp(): BigInt {
     return this._call.inputValues[5].value.toBigInt();
+  }
+
+  get redemptionBeginTimestamp(): BigInt {
+    return this._call.inputValues[6].value.toBigInt();
   }
 }
 
@@ -737,6 +789,66 @@ export class InitializeNextPeriodCall__Outputs {
   _call: InitializeNextPeriodCall;
 
   constructor(call: InitializeNextPeriodCall) {
+    this._call = call;
+  }
+}
+
+export class MoveTheLockPeriodCall extends ethereum.Call {
+  get inputs(): MoveTheLockPeriodCall__Inputs {
+    return new MoveTheLockPeriodCall__Inputs(this);
+  }
+
+  get outputs(): MoveTheLockPeriodCall__Outputs {
+    return new MoveTheLockPeriodCall__Outputs(this);
+  }
+}
+
+export class MoveTheLockPeriodCall__Inputs {
+  _call: MoveTheLockPeriodCall;
+
+  constructor(call: MoveTheLockPeriodCall) {
+    this._call = call;
+  }
+
+  get newPurchaseEndTimestamp(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class MoveTheLockPeriodCall__Outputs {
+  _call: MoveTheLockPeriodCall;
+
+  constructor(call: MoveTheLockPeriodCall) {
+    this._call = call;
+  }
+}
+
+export class MoveTheRedemptionPeriodCall extends ethereum.Call {
+  get inputs(): MoveTheRedemptionPeriodCall__Inputs {
+    return new MoveTheRedemptionPeriodCall__Inputs(this);
+  }
+
+  get outputs(): MoveTheRedemptionPeriodCall__Outputs {
+    return new MoveTheRedemptionPeriodCall__Outputs(this);
+  }
+}
+
+export class MoveTheRedemptionPeriodCall__Inputs {
+  _call: MoveTheRedemptionPeriodCall;
+
+  constructor(call: MoveTheRedemptionPeriodCall) {
+    this._call = call;
+  }
+
+  get newRedemptionBeginTimestamp(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class MoveTheRedemptionPeriodCall__Outputs {
+  _call: MoveTheRedemptionPeriodCall;
+
+  constructor(call: MoveTheRedemptionPeriodCall) {
     this._call = call;
   }
 }
