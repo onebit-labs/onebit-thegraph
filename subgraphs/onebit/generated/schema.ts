@@ -136,6 +136,15 @@ export class netValue extends Entity {
     }
   }
 
+  get reserveNormalizedIncome(): BigInt {
+    let value = this.get("reserveNormalizedIncome");
+    return value!.toBigInt();
+  }
+
+  set reserveNormalizedIncome(value: BigInt) {
+    this.set("reserveNormalizedIncome", Value.fromBigInt(value));
+  }
+
   get previousNetValue(): BigInt {
     let value = this.get("previousNetValue");
     return value!.toBigInt();

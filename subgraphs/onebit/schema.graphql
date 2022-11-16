@@ -3,13 +3,13 @@ type lendingPool @entity {
   term: Int!
   depositors: [Bytes!]!
   lastUpdateTimestamp: Int!
-  liquidityRate: BigInt!
   oTokenAddress: Bytes! #oTokenAddress
 }
 
 type netValue @entity {
   id: ID!
   lendingPool: Bytes #LendingPoolAddress
+  reserveNormalizedIncome: BigInt!
   previousNetValue: BigInt!
   newNetValue: BigInt!
   previousLiquidityIndex: BigInt!

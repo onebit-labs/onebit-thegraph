@@ -85,7 +85,6 @@ export function handleDeposit(event: Deposit): void {
       const reserveData = contract.getReserveData();
 
       poolRecord.oTokenAddress = reserveData.oTokenAddress;
-      poolRecord.liquidityRate = reserveData.currentLiquidityRate;
 
       let portfolioTermRecord = portfolioTerm.load(id);
       if (!portfolioTermRecord) {
@@ -145,14 +144,18 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
   record.newLiquidityIndex = event.params.newLiquidityIndex;
   record.currentLiquidityRate = event.params.currentLiquidityRate;
   record.createTimestamp = event.block.timestamp.toI32();
+  record.reserveNormalizedIncome = BigInt.fromI32(0);
   record.save();
 
   const lendingPoolAddress = event.transaction.to;
   if (!lendingPoolAddress) return;
+  const contract = LendingPool.bind(lendingPoolAddress);
+  record.reserveNormalizedIncome = contract.getReserveNormalizedIncome();
+  record.save();
+
   const poolId = lendingPoolAddress.toHexString();
   const poolRecord = lendingPool.load(poolId);
   if (!poolRecord) return;
-  poolRecord.liquidityRate = record.currentLiquidityRate;
   poolRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolRecord.save();
 }
