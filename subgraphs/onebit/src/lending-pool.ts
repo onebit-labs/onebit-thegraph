@@ -69,6 +69,8 @@ export function handleDeposit(event: Deposit): void {
   record.amount = event.params.amount;
   record.account = event.params.onBehalfOf;
   record.createTimestamp = event.block.timestamp.toI32();
+  record.to = record.lendingPool;
+  record.from = record.account;
 
   record.save();
 
@@ -126,9 +128,41 @@ export function handleDeposit(event: Deposit): void {
 
 export function handleFundAddressUpdated(event: FundAddressUpdated): void {}
 
-export function handleFundDeposit(event: FundDeposit): void {}
+export function handleFundDeposit(event: FundDeposit): void {
+  const id = event.transaction.hash.toHexString();
+  let record = transaction.load(id);
+  if (!record) {
+    record = new transaction(id);
+  }
 
-export function handleFundWithdraw(event: FundWithdraw): void {}
+  record.lendingPool = event.transaction.to;
+  record.type = 3;
+  record.amount = event.params.amount;
+  record.account = event.params.from;
+  record.createTimestamp = event.block.timestamp.toI32();
+  record.to = record.lendingPool;
+  record.from = record.account;
+
+  record.save();
+}
+
+export function handleFundWithdraw(event: FundWithdraw): void {
+  const id = event.transaction.hash.toHexString();
+  let record = transaction.load(id);
+  if (!record) {
+    record = new transaction(id);
+  }
+
+  record.lendingPool = event.transaction.to;
+  record.type = 3;
+  record.amount = event.params.amount;
+  record.account = event.params.to;
+  record.createTimestamp = event.block.timestamp.toI32();
+  record.to = record.account;
+  record.from = record.lendingPool;
+
+  record.save();
+}
 
 export function handleNetValueUpdated(event: NetValueUpdated): void {
   const id = event.transaction.hash.toHexString();
@@ -214,6 +248,8 @@ export function handleWithdraw(event: Withdraw): void {
   record.amount = event.params.amount;
   record.account = event.params.to;
   record.createTimestamp = event.block.timestamp.toI32();
+  record.to = record.account;
+  record.from = record.lendingPool;
 
   record.save();
 

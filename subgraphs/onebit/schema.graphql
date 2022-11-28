@@ -21,7 +21,9 @@ type netValue @entity {
 type transaction @entity {
   id: ID!
   lendingPool: Bytes #LendingPoolAddress
-  type: Int! # 1:deposit, 2:withdraw
+  to: Bytes #transaction to address
+  from: Bytes #transaction from address
+  type: Int! # 1:Deposit, 2:Withdraw, 3:FundTransfer
   account: Bytes!
   amount: BigInt!
   createTimestamp: Int!
