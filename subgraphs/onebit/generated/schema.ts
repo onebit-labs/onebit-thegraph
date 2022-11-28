@@ -69,15 +69,6 @@ export class lendingPool extends Entity {
     this.set("lastUpdateTimestamp", Value.fromI32(value));
   }
 
-  get liquidityRate(): BigInt {
-    let value = this.get("liquidityRate");
-    return value!.toBigInt();
-  }
-
-  set liquidityRate(value: BigInt) {
-    this.set("liquidityRate", Value.fromBigInt(value));
-  }
-
   get oTokenAddress(): Bytes {
     let value = this.get("oTokenAddress");
     return value!.toBytes();
@@ -333,13 +324,22 @@ export class portfolioTerm extends Entity {
     }
   }
 
-  get value(): BigInt {
-    let value = this.get("value");
+  get previousAssetsUnderManagement(): BigInt {
+    let value = this.get("previousAssetsUnderManagement");
     return value!.toBigInt();
   }
 
-  set value(value: BigInt) {
-    this.set("value", Value.fromBigInt(value));
+  set previousAssetsUnderManagement(value: BigInt) {
+    this.set("previousAssetsUnderManagement", Value.fromBigInt(value));
+  }
+
+  get previousNetValue(): BigInt {
+    let value = this.get("previousNetValue");
+    return value!.toBigInt();
+  }
+
+  set previousNetValue(value: BigInt) {
+    this.set("previousNetValue", Value.fromBigInt(value));
   }
 
   get term(): i32 {

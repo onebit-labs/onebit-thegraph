@@ -91,9 +91,9 @@ export function handleDeposit(event: Deposit): void {
         portfolioTermRecord = new portfolioTerm(id);
       }
 
-      const normalizedIncome = contract.getReserveNormalizedIncome();
       portfolioTermRecord.lendingPool = Bytes.fromHexString(poolId);
-      portfolioTermRecord.value = normalizedIncome;
+      portfolioTermRecord.previousNetValue = BigInt.fromI32(0);
+      portfolioTermRecord.previousAssetsUnderManagement = BigInt.fromI32(0);
       portfolioTermRecord.term = poolRecord.term;
       portfolioTermRecord.createTimestamp = event.block.timestamp.toI32();
       portfolioTermRecord.purchaseBeginTimestamp = reserveData.purchaseBeginTimestamp.toI32();
@@ -176,13 +176,18 @@ export function handlePeriodInitialized(event: PeriodInitialized): void {
   const contract = LendingPool.bind(lendingPoolAddress);
   const normalizedIncome = contract.getReserveNormalizedIncome();
 
+  const oTokenAddress = Address.fromBytes(poolRecord.oTokenAddress);
+  const OTokenContract = OToken.bind(oTokenAddress);
+  const totalSupply = OTokenContract.totalSupply();
+
   let portfolioTermRecord = portfolioTerm.load(id);
   if (!portfolioTermRecord) {
     portfolioTermRecord = new portfolioTerm(id);
   }
 
   portfolioTermRecord.lendingPool = Bytes.fromHexString(poolId);
-  portfolioTermRecord.value = normalizedIncome;
+  portfolioTermRecord.previousNetValue = normalizedIncome;
+  portfolioTermRecord.previousAssetsUnderManagement = totalSupply;
   portfolioTermRecord.term = poolRecord.term;
   portfolioTermRecord.createTimestamp = event.block.timestamp.toI32();
   portfolioTermRecord.purchaseBeginTimestamp = event.params.purchaseBeginTimestamp.toI32();

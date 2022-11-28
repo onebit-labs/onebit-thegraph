@@ -30,7 +30,8 @@ type transaction @entity {
 type portfolioTerm @entity {
   id: ID!
   lendingPool: Bytes #LendingPoolAddress
-  value: BigInt!
+  previousAssetsUnderManagement: BigInt!
+  previousNetValue: BigInt!
   term: Int!
   createTimestamp: Int!
   redemptionBeginTimestamp: Int!
