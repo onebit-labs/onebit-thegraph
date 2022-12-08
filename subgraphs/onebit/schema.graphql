@@ -33,6 +33,7 @@ type portfolioTerm @entity {
   id: ID!
   lendingPool: Bytes #LendingPoolAddress
   previousAssetsUnderManagement: BigInt!
+  previousScaledAssetsUnderManagement: BigInt!
   previousNetValue: BigInt!
   term: Int!
   createTimestamp: Int!

@@ -367,6 +367,15 @@ export class portfolioTerm extends Entity {
     this.set("previousAssetsUnderManagement", Value.fromBigInt(value));
   }
 
+  get previousScaledAssetsUnderManagement(): BigInt {
+    let value = this.get("previousScaledAssetsUnderManagement");
+    return value!.toBigInt();
+  }
+
+  set previousScaledAssetsUnderManagement(value: BigInt) {
+    this.set("previousScaledAssetsUnderManagement", Value.fromBigInt(value));
+  }
+
   get previousNetValue(): BigInt {
     let value = this.get("previousNetValue");
     return value!.toBigInt();

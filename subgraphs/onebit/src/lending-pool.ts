@@ -96,6 +96,9 @@ export function handleDeposit(event: Deposit): void {
       portfolioTermRecord.lendingPool = Bytes.fromHexString(poolId);
       portfolioTermRecord.previousNetValue = BigInt.fromI32(0);
       portfolioTermRecord.previousAssetsUnderManagement = BigInt.fromI32(0);
+      portfolioTermRecord.previousScaledAssetsUnderManagement = BigInt.fromI32(
+        0
+      );
       portfolioTermRecord.term = poolRecord.term;
       portfolioTermRecord.createTimestamp = event.block.timestamp.toI32();
       portfolioTermRecord.purchaseBeginTimestamp = reserveData.purchaseBeginTimestamp.toI32();
@@ -213,6 +216,7 @@ export function handlePeriodInitialized(event: PeriodInitialized): void {
   const oTokenAddress = Address.fromBytes(poolRecord.oTokenAddress);
   const OTokenContract = OToken.bind(oTokenAddress);
   const totalSupply = OTokenContract.totalSupply();
+  const scaledTotalSupply = OTokenContract.scaledTotalSupply();
 
   let portfolioTermRecord = portfolioTerm.load(id);
   if (!portfolioTermRecord) {
@@ -222,6 +226,7 @@ export function handlePeriodInitialized(event: PeriodInitialized): void {
   portfolioTermRecord.lendingPool = Bytes.fromHexString(poolId);
   portfolioTermRecord.previousNetValue = normalizedIncome;
   portfolioTermRecord.previousAssetsUnderManagement = totalSupply;
+  portfolioTermRecord.previousScaledAssetsUnderManagement = scaledTotalSupply;
   portfolioTermRecord.term = poolRecord.term;
   portfolioTermRecord.createTimestamp = event.block.timestamp.toI32();
   portfolioTermRecord.purchaseBeginTimestamp = event.params.purchaseBeginTimestamp.toI32();
