@@ -2,6 +2,7 @@ specVersion: 0.0.4
 schema:
   file: ./schema.graphql
 dataSources:
+  # Onebit-Lightning-Hunter-USDT
   - kind: ethereum
     name: Onebit-Lightning-Hunter-USDT
     network: goerli
@@ -54,6 +55,42 @@ dataSources:
           handler: handleWithdraw
       file: ./src/lending-pool.ts
   - kind: ethereum
+    name: Onebit-Lightning-Hunter-USDT__OToken
+    network: goerli
+    source:
+      address: "0x590d59fbdbf9655b7f20b5fd4bb04b08466577ee"
+      abi: OToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - BalanceTransfer
+        - Burn
+        - Initialized
+        - Mint
+        - Transfer
+      abis:
+        - name: OToken
+          file: ./abis/OToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: BalanceTransfer(indexed address,indexed address,uint256,uint256)
+          handler: handleBalanceTransfer
+        - event: Burn(indexed address,indexed address,uint256,uint256)
+          handler: handleBurn
+        - event: Initialized(indexed address,indexed address,uint8,string,string,bytes)
+          handler: handleInitialized
+        - event: Mint(indexed address,uint256,uint256)
+          handler: handleMint
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/o-token.ts
+
+  # Onebit-Smart-Trend-USDT
+  - kind: ethereum
     name: Onebit-Smart-Trend-USDT
     network: goerli
     source:
@@ -104,6 +141,41 @@ dataSources:
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
       file: ./src/lending-pool.ts
+  - kind: ethereum
+    name: Onebit-Smart-Trend-USDT__OToken
+    network: goerli
+    source:
+      address: "0x85f97d9d9b0f61aa9f4fdfd8cb320807110bb654"
+      abi: OToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - BalanceTransfer
+        - Burn
+        - Initialized
+        - Mint
+        - Transfer
+      abis:
+        - name: OToken
+          file: ./abis/OToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: BalanceTransfer(indexed address,indexed address,uint256,uint256)
+          handler: handleBalanceTransfer
+        - event: Burn(indexed address,indexed address,uint256,uint256)
+          handler: handleBurn
+        - event: Initialized(indexed address,indexed address,uint8,string,string,bytes)
+          handler: handleInitialized
+        - event: Mint(indexed address,uint256,uint256)
+          handler: handleMint
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/o-token.ts
+  # Onebit-Smart-Trend-BTC
   - kind: ethereum
     name: Onebit-Smart-Trend-BTC
     network: goerli
@@ -156,6 +228,41 @@ dataSources:
           handler: handleWithdraw
       file: ./src/lending-pool.ts
   - kind: ethereum
+    name: Onebit-Smart-Trend-BTC__OToken
+    network: goerli
+    source:
+      address: "0xa8e4ec8b4103c683c981f4b2306d416fef1dea4d"
+      abi: OToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - BalanceTransfer
+        - Burn
+        - Initialized
+        - Mint
+        - Transfer
+      abis:
+        - name: OToken
+          file: ./abis/OToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: BalanceTransfer(indexed address,indexed address,uint256,uint256)
+          handler: handleBalanceTransfer
+        - event: Burn(indexed address,indexed address,uint256,uint256)
+          handler: handleBurn
+        - event: Initialized(indexed address,indexed address,uint8,string,string,bytes)
+          handler: handleInitialized
+        - event: Mint(indexed address,uint256,uint256)
+          handler: handleMint
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/o-token.ts
+  # Onebit-Smart-Trend-USDT-Demo
+  - kind: ethereum
     name: Onebit-Smart-Trend-USDT-Demo
     network: goerli
     source:
@@ -207,6 +314,41 @@ dataSources:
           handler: handleWithdraw
       file: ./src/lending-pool.ts
   - kind: ethereum
+    name: Onebit-Smart-Trend-USDT-Demo__OToken
+    network: goerli
+    source:
+      address: "0x3ef565f95da654d3196e6bc8961959da309efcf6"
+      abi: OToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - BalanceTransfer
+        - Burn
+        - Initialized
+        - Mint
+        - Transfer
+      abis:
+        - name: OToken
+          file: ./abis/OToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: BalanceTransfer(indexed address,indexed address,uint256,uint256)
+          handler: handleBalanceTransfer
+        - event: Burn(indexed address,indexed address,uint256,uint256)
+          handler: handleBurn
+        - event: Initialized(indexed address,indexed address,uint8,string,string,bytes)
+          handler: handleInitialized
+        - event: Mint(indexed address,uint256,uint256)
+          handler: handleMint
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/o-token.ts
+  # Onebit-Smart-Trend-USDT-Whitelist-Test
+  - kind: ethereum
     name: Onebit-Smart-Trend-USDT-Whitelist-Test
     network: goerli
     source:
@@ -257,6 +399,41 @@ dataSources:
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
       file: ./src/lending-pool.ts
+  - kind: ethereum
+    name: Onebit-Smart-Trend-USDT-Whitelist-Test__OToken
+    network: goerli
+    source:
+      address: "0xc470d401cd08133e3dda5d6965b7d53611ad240b"
+      abi: OToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Approval
+        - BalanceTransfer
+        - Burn
+        - Initialized
+        - Mint
+        - Transfer
+      abis:
+        - name: OToken
+          file: ./abis/OToken.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
+        - event: BalanceTransfer(indexed address,indexed address,uint256,uint256)
+          handler: handleBalanceTransfer
+        - event: Burn(indexed address,indexed address,uint256,uint256)
+          handler: handleBurn
+        - event: Initialized(indexed address,indexed address,uint8,string,string,bytes)
+          handler: handleInitialized
+        - event: Mint(indexed address,uint256,uint256)
+          handler: handleMint
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/o-token.ts
+  # ERC-20
   - kind: ethereum
     name: USDT
     network: goerli
