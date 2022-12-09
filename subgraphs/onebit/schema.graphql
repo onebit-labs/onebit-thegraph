@@ -23,7 +23,7 @@ type transaction @entity {
   lendingPool: Bytes #LendingPoolAddress
   to: Bytes #transaction to address
   from: Bytes #transaction from address
-  type: Int! # 1:Deposit, 2:Withdraw, 3:FundTransfer
+  type: Int! # 1:Deposit, 2:Withdraw, 3:FundTransfer, 4:BalanceTransfer
   account: Bytes!
   amount: BigInt!
   createTimestamp: Int!
