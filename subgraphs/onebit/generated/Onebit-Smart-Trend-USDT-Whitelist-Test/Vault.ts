@@ -10,6 +10,28 @@ import {
   BigInt
 } from "@graphprotocol/graph-ts";
 
+export class AddedToWhitelist extends ethereum.Event {
+  get params(): AddedToWhitelist__Params {
+    return new AddedToWhitelist__Params(this);
+  }
+}
+
+export class AddedToWhitelist__Params {
+  _event: AddedToWhitelist;
+
+  constructor(event: AddedToWhitelist) {
+    this._event = event;
+  }
+
+  get user(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+
+  get expirationTime(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
 export class Deposit extends ethereum.Event {
   get params(): Deposit__Params {
     return new Deposit__Params(this);
@@ -232,6 +254,24 @@ export class RedemptionBeginTimestampMoved__Params {
   }
 }
 
+export class RemoveFromWhitelist extends ethereum.Event {
+  get params(): RemoveFromWhitelist__Params {
+    return new RemoveFromWhitelist__Params(this);
+  }
+}
+
+export class RemoveFromWhitelist__Params {
+  _event: RemoveFromWhitelist;
+
+  constructor(event: RemoveFromWhitelist) {
+    this._event = event;
+  }
+
+  get user(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
 export class Unpaused extends ethereum.Event {
   get params(): Unpaused__Params {
     return new Unpaused__Params(this);
@@ -243,6 +283,24 @@ export class Unpaused__Params {
 
   constructor(event: Unpaused) {
     this._event = event;
+  }
+}
+
+export class WhitelistExpirationUpdated extends ethereum.Event {
+  get params(): WhitelistExpirationUpdated__Params {
+    return new WhitelistExpirationUpdated__Params(this);
+  }
+}
+
+export class WhitelistExpirationUpdated__Params {
+  _event: WhitelistExpirationUpdated;
+
+  constructor(event: WhitelistExpirationUpdated) {
+    this._event = event;
+  }
+
+  get newExpiration(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
   }
 }
 
@@ -280,9 +338,9 @@ export class Vault__getConfigurationResultValue0Struct extends ethereum.Tuple {
 
 export class Vault__getReserveDataResultValue0Struct extends ethereum.Tuple {
   get configuration(): Vault__getReserveDataResultValue0ConfigurationStruct {
-    return changetype<
-      Vault__getReserveDataResultValue0ConfigurationStruct
-    >(this[0].toTuple());
+    return changetype<Vault__getReserveDataResultValue0ConfigurationStruct>(
+      this[0].toTuple()
+    );
   }
 
   get liquidityIndex(): BigInt {
@@ -349,20 +407,16 @@ export class Vault extends ethereum.SmartContract {
     return new Vault("Vault", address);
   }
 
-  LENDINGPOOL_REVISION(): BigInt {
-    let result = super.call(
-      "LENDINGPOOL_REVISION",
-      "LENDINGPOOL_REVISION():(uint256)",
-      []
-    );
+  VAULT_REVISION(): BigInt {
+    let result = super.call("VAULT_REVISION", "VAULT_REVISION():(uint256)", []);
 
     return result[0].toBigInt();
   }
 
-  try_LENDINGPOOL_REVISION(): ethereum.CallResult<BigInt> {
+  try_VAULT_REVISION(): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
-      "LENDINGPOOL_REVISION",
-      "LENDINGPOOL_REVISION():(uint256)",
+      "VAULT_REVISION",
+      "VAULT_REVISION():(uint256)",
       []
     );
     if (result.reverted) {
@@ -455,9 +509,7 @@ export class Vault extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      changetype<Vault__getConfigurationResultValue0Struct>(
-        value[0].toTuple()
-      )
+      changetype<Vault__getConfigurationResultValue0Struct>(value[0].toTuple())
     );
   }
 
@@ -486,9 +538,7 @@ export class Vault extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      changetype<Vault__getReserveDataResultValue0Struct>(
-        value[0].toTuple()
-      )
+      changetype<Vault__getReserveDataResultValue0Struct>(value[0].toTuple())
     );
   }
 
@@ -513,6 +563,73 @@ export class Vault extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getUserExpirationTimestamp(user: Address): BigInt {
+    let result = super.call(
+      "getUserExpirationTimestamp",
+      "getUserExpirationTimestamp(address):(uint256)",
+      [ethereum.Value.fromAddress(user)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getUserExpirationTimestamp(user: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getUserExpirationTimestamp",
+      "getUserExpirationTimestamp(address):(uint256)",
+      [ethereum.Value.fromAddress(user)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  getWhitelistExpiration(): BigInt {
+    let result = super.call(
+      "getWhitelistExpiration",
+      "getWhitelistExpiration():(uint256)",
+      []
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getWhitelistExpiration(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getWhitelistExpiration",
+      "getWhitelistExpiration():(uint256)",
+      []
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
+  isInWhitelist(user: Address): boolean {
+    let result = super.call("isInWhitelist", "isInWhitelist(address):(bool)", [
+      ethereum.Value.fromAddress(user)
+    ]);
+
+    return result[0].toBoolean();
+  }
+
+  try_isInWhitelist(user: Address): ethereum.CallResult<boolean> {
+    let result = super.tryCall(
+      "isInWhitelist",
+      "isInWhitelist(address):(bool)",
+      [ethereum.Value.fromAddress(user)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBoolean());
   }
 
   paused(): boolean {
@@ -603,6 +720,96 @@ export class ConstructorCall__Outputs {
   }
 }
 
+export class AddToWhitelistCall extends ethereum.Call {
+  get inputs(): AddToWhitelistCall__Inputs {
+    return new AddToWhitelistCall__Inputs(this);
+  }
+
+  get outputs(): AddToWhitelistCall__Outputs {
+    return new AddToWhitelistCall__Outputs(this);
+  }
+}
+
+export class AddToWhitelistCall__Inputs {
+  _call: AddToWhitelistCall;
+
+  constructor(call: AddToWhitelistCall) {
+    this._call = call;
+  }
+
+  get user(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class AddToWhitelistCall__Outputs {
+  _call: AddToWhitelistCall;
+
+  constructor(call: AddToWhitelistCall) {
+    this._call = call;
+  }
+}
+
+export class BatchAddToWhitelistCall extends ethereum.Call {
+  get inputs(): BatchAddToWhitelistCall__Inputs {
+    return new BatchAddToWhitelistCall__Inputs(this);
+  }
+
+  get outputs(): BatchAddToWhitelistCall__Outputs {
+    return new BatchAddToWhitelistCall__Outputs(this);
+  }
+}
+
+export class BatchAddToWhitelistCall__Inputs {
+  _call: BatchAddToWhitelistCall;
+
+  constructor(call: BatchAddToWhitelistCall) {
+    this._call = call;
+  }
+
+  get users(): Array<Address> {
+    return this._call.inputValues[0].value.toAddressArray();
+  }
+}
+
+export class BatchAddToWhitelistCall__Outputs {
+  _call: BatchAddToWhitelistCall;
+
+  constructor(call: BatchAddToWhitelistCall) {
+    this._call = call;
+  }
+}
+
+export class BatchRemoveFromWhitelistCall extends ethereum.Call {
+  get inputs(): BatchRemoveFromWhitelistCall__Inputs {
+    return new BatchRemoveFromWhitelistCall__Inputs(this);
+  }
+
+  get outputs(): BatchRemoveFromWhitelistCall__Outputs {
+    return new BatchRemoveFromWhitelistCall__Outputs(this);
+  }
+}
+
+export class BatchRemoveFromWhitelistCall__Inputs {
+  _call: BatchRemoveFromWhitelistCall;
+
+  constructor(call: BatchRemoveFromWhitelistCall) {
+    this._call = call;
+  }
+
+  get users(): Array<Address> {
+    return this._call.inputValues[0].value.toAddressArray();
+  }
+}
+
+export class BatchRemoveFromWhitelistCall__Outputs {
+  _call: BatchRemoveFromWhitelistCall;
+
+  constructor(call: BatchRemoveFromWhitelistCall) {
+    this._call = call;
+  }
+}
+
 export class DepositCall extends ethereum.Call {
   get inputs(): DepositCall__Inputs {
     return new DepositCall__Inputs(this);
@@ -672,6 +879,36 @@ export class DepositFundCall__Outputs {
 
   constructor(call: DepositFundCall) {
     this._call = call;
+  }
+}
+
+export class GetWhitelistExpirationCall extends ethereum.Call {
+  get inputs(): GetWhitelistExpirationCall__Inputs {
+    return new GetWhitelistExpirationCall__Inputs(this);
+  }
+
+  get outputs(): GetWhitelistExpirationCall__Outputs {
+    return new GetWhitelistExpirationCall__Outputs(this);
+  }
+}
+
+export class GetWhitelistExpirationCall__Inputs {
+  _call: GetWhitelistExpirationCall;
+
+  constructor(call: GetWhitelistExpirationCall) {
+    this._call = call;
+  }
+}
+
+export class GetWhitelistExpirationCall__Outputs {
+  _call: GetWhitelistExpirationCall;
+
+  constructor(call: GetWhitelistExpirationCall) {
+    this._call = call;
+  }
+
+  get value0(): BigInt {
+    return this._call.outputValues[0].value.toBigInt();
   }
 }
 
@@ -853,6 +1090,36 @@ export class MoveTheRedemptionPeriodCall__Outputs {
   }
 }
 
+export class RemoveFromWhitelistCall extends ethereum.Call {
+  get inputs(): RemoveFromWhitelistCall__Inputs {
+    return new RemoveFromWhitelistCall__Inputs(this);
+  }
+
+  get outputs(): RemoveFromWhitelistCall__Outputs {
+    return new RemoveFromWhitelistCall__Outputs(this);
+  }
+}
+
+export class RemoveFromWhitelistCall__Inputs {
+  _call: RemoveFromWhitelistCall;
+
+  constructor(call: RemoveFromWhitelistCall) {
+    this._call = call;
+  }
+
+  get user(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class RemoveFromWhitelistCall__Outputs {
+  _call: RemoveFromWhitelistCall;
+
+  constructor(call: RemoveFromWhitelistCall) {
+    this._call = call;
+  }
+}
+
 export class SetConfigurationCall extends ethereum.Call {
   get inputs(): SetConfigurationCall__Inputs {
     return new SetConfigurationCall__Inputs(this);
@@ -879,6 +1146,36 @@ export class SetConfigurationCall__Outputs {
   _call: SetConfigurationCall;
 
   constructor(call: SetConfigurationCall) {
+    this._call = call;
+  }
+}
+
+export class SetFuncAddressCall extends ethereum.Call {
+  get inputs(): SetFuncAddressCall__Inputs {
+    return new SetFuncAddressCall__Inputs(this);
+  }
+
+  get outputs(): SetFuncAddressCall__Outputs {
+    return new SetFuncAddressCall__Outputs(this);
+  }
+}
+
+export class SetFuncAddressCall__Inputs {
+  _call: SetFuncAddressCall;
+
+  constructor(call: SetFuncAddressCall) {
+    this._call = call;
+  }
+
+  get fundAddress(): Address {
+    return this._call.inputValues[0].value.toAddress();
+  }
+}
+
+export class SetFuncAddressCall__Outputs {
+  _call: SetFuncAddressCall;
+
+  constructor(call: SetFuncAddressCall) {
     this._call = call;
   }
 }
@@ -913,32 +1210,32 @@ export class SetPauseCall__Outputs {
   }
 }
 
-export class UpdateFuncAddressCall extends ethereum.Call {
-  get inputs(): UpdateFuncAddressCall__Inputs {
-    return new UpdateFuncAddressCall__Inputs(this);
+export class SetWhitelistExpirationCall extends ethereum.Call {
+  get inputs(): SetWhitelistExpirationCall__Inputs {
+    return new SetWhitelistExpirationCall__Inputs(this);
   }
 
-  get outputs(): UpdateFuncAddressCall__Outputs {
-    return new UpdateFuncAddressCall__Outputs(this);
+  get outputs(): SetWhitelistExpirationCall__Outputs {
+    return new SetWhitelistExpirationCall__Outputs(this);
   }
 }
 
-export class UpdateFuncAddressCall__Inputs {
-  _call: UpdateFuncAddressCall;
+export class SetWhitelistExpirationCall__Inputs {
+  _call: SetWhitelistExpirationCall;
 
-  constructor(call: UpdateFuncAddressCall) {
+  constructor(call: SetWhitelistExpirationCall) {
     this._call = call;
   }
 
-  get fundAddress(): Address {
-    return this._call.inputValues[0].value.toAddress();
+  get expiration(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
   }
 }
 
-export class UpdateFuncAddressCall__Outputs {
-  _call: UpdateFuncAddressCall;
+export class SetWhitelistExpirationCall__Outputs {
+  _call: SetWhitelistExpirationCall;
 
-  constructor(call: UpdateFuncAddressCall) {
+  constructor(call: SetWhitelistExpirationCall) {
     this._call = call;
   }
 }

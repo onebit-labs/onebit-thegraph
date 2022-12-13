@@ -1,5 +1,28 @@
 [
-  { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "expirationTime",
+        "type": "uint256"
+      }
+    ],
+    "name": "AddedToWhitelist",
+    "type": "event"
+  },
   {
     "anonymous": false,
     "inputs": [
@@ -119,7 +142,12 @@
     "name": "NetValueUpdated",
     "type": "event"
   },
-  { "anonymous": false, "inputs": [], "name": "Paused", "type": "event" },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "Paused",
+    "type": "event"
+  },
   {
     "anonymous": false,
     "inputs": [
@@ -201,7 +229,38 @@
     "name": "RedemptionBeginTimestampMoved",
     "type": "event"
   },
-  { "anonymous": false, "inputs": [], "name": "Unpaused", "type": "event" },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "RemoveFromWhitelist",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "Unpaused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newExpiration",
+        "type": "uint256"
+      }
+    ],
+    "name": "WhitelistExpirationUpdated",
+    "type": "event"
+  },
   {
     "anonymous": false,
     "inputs": [
@@ -229,25 +288,92 @@
   },
   {
     "inputs": [],
-    "name": "LENDINGPOOL_REVISION",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "VAULT_REVISION",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "amount", "type": "uint256" },
-      { "internalType": "address", "name": "onBehalfOf", "type": "address" },
-      { "internalType": "uint16", "name": "referralCode", "type": "uint16" }
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
     ],
-    "name": "deposit",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "addToWhitelist",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "amount", "type": "uint256" }
+      {
+        "internalType": "address[]",
+        "name": "users",
+        "type": "address[]"
+      }
+    ],
+    "name": "batchAddToWhitelist",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "users",
+        "type": "address[]"
+      }
+    ],
+    "name": "batchRemoveFromWhitelist",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "onBehalfOf",
+        "type": "address"
+      },
+      {
+        "internalType": "uint16",
+        "name": "referralCode",
+        "type": "uint16"
+      }
+    ],
+    "name": "deposit",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
     ],
     "name": "depositFund",
     "outputs": [],
@@ -273,7 +399,11 @@
     "outputs": [
       {
         "components": [
-          { "internalType": "uint256", "name": "data", "type": "uint256" }
+          {
+            "internalType": "uint256",
+            "name": "data",
+            "type": "uint256"
+          }
         ],
         "internalType": "struct DataTypes.ReserveConfigurationMap",
         "name": "",
@@ -291,7 +421,11 @@
         "components": [
           {
             "components": [
-              { "internalType": "uint256", "name": "data", "type": "uint256" }
+              {
+                "internalType": "uint256",
+                "name": "data",
+                "type": "uint256"
+              }
             ],
             "internalType": "struct DataTypes.ReserveConfigurationMap",
             "name": "configuration",
@@ -374,14 +508,60 @@
   {
     "inputs": [],
     "name": "getReserveNormalizedIncome",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "oToken", "type": "address" },
-      { "internalType": "address", "name": "fundAddress", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "getUserExpirationTimestamp",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getWhitelistExpiration",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "oToken",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "fundAddress",
+        "type": "address"
+      }
     ],
     "name": "initReserve",
     "outputs": [],
@@ -447,6 +627,25 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "isInWhitelist",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint40",
         "name": "newPurchaseEndTimestamp",
         "type": "uint40"
@@ -473,13 +672,36 @@
   {
     "inputs": [],
     "name": "paused",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "configuration", "type": "uint256" }
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "removeFromWhitelist",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "configuration",
+        "type": "uint256"
+      }
     ],
     "name": "setConfiguration",
     "outputs": [],
@@ -487,7 +709,26 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "bool", "name": "val", "type": "bool" }],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "fundAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setFuncAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bool",
+        "name": "val",
+        "type": "bool"
+      }
+    ],
     "name": "setPause",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -495,16 +736,24 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "fundAddress", "type": "address" }
+      {
+        "internalType": "uint256",
+        "name": "expiration",
+        "type": "uint256"
+      }
     ],
-    "name": "updateFuncAddress",
+    "name": "setWhitelistExpiration",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "netValue", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "netValue",
+        "type": "uint256"
+      }
     ],
     "name": "updateNetValue",
     "outputs": [],
@@ -513,20 +762,44 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "amount", "type": "uint256" },
-      { "internalType": "address", "name": "to", "type": "address" }
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      }
     ],
     "name": "withdraw",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "amount", "type": "uint256" }
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
     ],
     "name": "withdrawFund",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   }

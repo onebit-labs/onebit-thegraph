@@ -113,7 +113,7 @@ export class Initialized__Params {
     return this._event.parameters[0].value.toAddress();
   }
 
-  get pool(): Address {
+  get vault(): Address {
     return this._event.parameters[1].value.toAddress();
   }
 
@@ -304,21 +304,6 @@ export class OToken extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBytes());
   }
 
-  POOL(): Address {
-    let result = super.call("POOL", "POOL():(address)", []);
-
-    return result[0].toAddress();
-  }
-
-  try_POOL(): ethereum.CallResult<Address> {
-    let result = super.tryCall("POOL", "POOL():(address)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
-  }
-
   UNDERLYING_ASSET_ADDRESS(): Address {
     let result = super.call(
       "UNDERLYING_ASSET_ADDRESS",
@@ -335,6 +320,21 @@ export class OToken extends ethereum.SmartContract {
       "UNDERLYING_ASSET_ADDRESS():(address)",
       []
     );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  VAULT(): Address {
+    let result = super.call("VAULT", "VAULT():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_VAULT(): ethereum.CallResult<Address> {
+    let result = super.tryCall("VAULT", "VAULT():(address)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -947,7 +947,7 @@ export class InitializeCall__Inputs {
     this._call = call;
   }
 
-  get pool(): Address {
+  get vault(): Address {
     return this._call.inputValues[0].value.toAddress();
   }
 
