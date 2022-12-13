@@ -28,22 +28,22 @@ import {
   depositor,
 } from "../generated/schema";
 
-function pushDepositor(pool: vault, value: Bytes): void {
-  const array = pool.depositors;
-  for (let i = 0; i < pool.depositors.length; i++) {
-    if (pool.depositors[i].toHexString() == value.toHexString()) return;
+function pushDepositor(vault: vault, value: Bytes): void {
+  const array = vault.depositors;
+  for (let i = 0; i < vault.depositors.length; i++) {
+    if (vault.depositors[i].toHexString() == value.toHexString()) return;
   }
   array.push(value);
-  pool.depositors = array;
+  vault.depositors = array;
 }
 
-function removeDepositor(pool: vault, value: Bytes): void {
+function removeDepositor(vault: vault, value: Bytes): void {
   const array = new Array<Bytes>(0);
-  for (let i = 0; i < pool.depositors.length; i++) {
-    if (pool.depositors[i].toHexString() == value.toHexString()) continue;
-    array.push(pool.depositors[i]);
+  for (let i = 0; i < vault.depositors.length; i++) {
+    if (vault.depositors[i].toHexString() == value.toHexString()) continue;
+    array.push(vault.depositors[i]);
   }
-  pool.depositors = array;
+  vault.depositors = array;
 }
 
 function getDepositorId(
@@ -76,30 +76,30 @@ export function handleDeposit(event: Deposit): void {
 
   const vaultAddress = event.transaction.to;
   if (vaultAddress) {
-    const poolId = vaultAddress.toHexString();
-    let poolRecord = vault.load(poolId);
-    if (!poolRecord) {
-      poolRecord = new vault(poolId);
-      poolRecord.term = 1;
-      poolRecord.depositors = new Array<Bytes>(0);
+    const vaultId = vaultAddress.toHexString();
+    let vaultRecord = vault.load(vaultId);
+    if (!vaultRecord) {
+      vaultRecord = new vault(vaultId);
+      vaultRecord.term = 1;
+      vaultRecord.depositors = new Array<Bytes>(0);
 
       const contract = Vault.bind(vaultAddress);
       const reserveData = contract.getReserveData();
 
-      poolRecord.oTokenAddress = reserveData.oTokenAddress;
+      vaultRecord.oTokenAddress = reserveData.oTokenAddress;
 
       let portfolioTermRecord = portfolioTerm.load(id);
       if (!portfolioTermRecord) {
         portfolioTermRecord = new portfolioTerm(id);
       }
 
-      portfolioTermRecord.vault = Bytes.fromHexString(poolId);
+      portfolioTermRecord.vault = Bytes.fromHexString(vaultId);
       portfolioTermRecord.previousNetValue = BigInt.fromI32(0);
       portfolioTermRecord.previousAssetsUnderManagement = BigInt.fromI32(0);
       portfolioTermRecord.previousScaledAssetsUnderManagement = BigInt.fromI32(
         0
       );
-      portfolioTermRecord.term = poolRecord.term;
+      portfolioTermRecord.term = vaultRecord.term;
       portfolioTermRecord.createTimestamp = event.block.timestamp.toI32();
       portfolioTermRecord.purchaseBeginTimestamp = reserveData.purchaseBeginTimestamp.toI32();
       portfolioTermRecord.redemptionBeginTimestamp = reserveData.redemptionBeginTimestamp.toI32();
@@ -111,15 +111,15 @@ export function handleDeposit(event: Deposit): void {
       portfolioTermRecord.save();
     }
 
-    poolRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
-    pushDepositor(poolRecord, record.account);
-    poolRecord.save();
+    vaultRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
+    pushDepositor(vaultRecord, record.account);
+    vaultRecord.save();
 
     const depositorId = getDepositorId(vaultAddress, record.account);
     let depositorRecord = depositor.load(depositorId);
     if (!depositorRecord) {
       depositorRecord = new depositor(depositorId);
-      depositorRecord.oTokenAddress = poolRecord.oTokenAddress;
+      depositorRecord.oTokenAddress = vaultRecord.oTokenAddress;
       depositorRecord.account = record.account;
       depositorRecord.vault = vaultAddress;
       depositorRecord.createTimestamp = event.block.timestamp.toI32();
@@ -190,11 +190,11 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
   record.reserveNormalizedIncome = contract.getReserveNormalizedIncome();
   record.save();
 
-  const poolId = vaultAddress.toHexString();
-  const poolRecord = vault.load(poolId);
-  if (!poolRecord) return;
-  poolRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
-  poolRecord.save();
+  const vaultId = vaultAddress.toHexString();
+  const vaultRecord = vault.load(vaultId);
+  if (!vaultRecord) return;
+  vaultRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
+  vaultRecord.save();
 }
 
 export function handlePaused(event: Paused): void {}
@@ -202,18 +202,18 @@ export function handlePaused(event: Paused): void {}
 export function handlePeriodInitialized(event: PeriodInitialized): void {
   const vaultAddress = event.transaction.to;
   if (!vaultAddress) return;
-  const poolId = vaultAddress.toHexString();
-  const poolRecord = vault.load(poolId);
-  if (!poolRecord) return;
-  poolRecord.term = poolRecord.term + 1;
-  poolRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
-  poolRecord.save();
+  const vaultId = vaultAddress.toHexString();
+  const vaultRecord = vault.load(vaultId);
+  if (!vaultRecord) return;
+  vaultRecord.term = vaultRecord.term + 1;
+  vaultRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
+  vaultRecord.save();
 
   const id = event.transaction.hash.toHexString();
   const contract = Vault.bind(vaultAddress);
   const normalizedIncome = contract.getReserveNormalizedIncome();
 
-  const oTokenAddress = Address.fromBytes(poolRecord.oTokenAddress);
+  const oTokenAddress = Address.fromBytes(vaultRecord.oTokenAddress);
   const OTokenContract = OToken.bind(oTokenAddress);
   const totalSupply = OTokenContract.totalSupply();
   const scaledTotalSupply = OTokenContract.scaledTotalSupply();
@@ -223,18 +223,18 @@ export function handlePeriodInitialized(event: PeriodInitialized): void {
     portfolioTermRecord = new portfolioTerm(id);
   }
 
-  portfolioTermRecord.vault = Bytes.fromHexString(poolId);
+  portfolioTermRecord.vault = Bytes.fromHexString(vaultId);
   portfolioTermRecord.previousNetValue = normalizedIncome;
   portfolioTermRecord.previousAssetsUnderManagement = totalSupply;
   portfolioTermRecord.previousScaledAssetsUnderManagement = scaledTotalSupply;
-  portfolioTermRecord.term = poolRecord.term;
+  portfolioTermRecord.term = vaultRecord.term;
   portfolioTermRecord.createTimestamp = event.block.timestamp.toI32();
   portfolioTermRecord.purchaseBeginTimestamp = event.params.purchaseBeginTimestamp.toI32();
   portfolioTermRecord.redemptionBeginTimestamp = event.params.redemptionBeginTimestamp.toI32();
   portfolioTermRecord.purchaseEndTimestamp = event.params.purchaseEndTimestamp.toI32();
   portfolioTermRecord.previousLiquidityIndex =
     event.params.previousLiquidityIndex;
-  portfolioTermRecord.previousDepositors = poolRecord.depositors.length;
+  portfolioTermRecord.previousDepositors = vaultRecord.depositors.length;
   portfolioTermRecord.managementFeeRate = event.params.managementFeeRate;
   portfolioTermRecord.performanceFeeRate = event.params.performanceFeeRate;
   portfolioTermRecord.save();
@@ -268,11 +268,11 @@ export function handleWithdraw(event: Withdraw): void {
     const balanceOf = OTokenContract.balanceOf(event.params.to);
 
     if (balanceOf.isZero()) {
-      const poolId = vaultAddress.toHexString();
-      let poolRecord = vault.load(poolId);
-      if (!poolRecord) return;
-      removeDepositor(poolRecord, record.account);
-      poolRecord.save();
+      const vaultId = vaultAddress.toHexString();
+      let vaultRecord = vault.load(vaultId);
+      if (!vaultRecord) return;
+      removeDepositor(vaultRecord, record.account);
+      vaultRecord.save();
     }
   }
 }

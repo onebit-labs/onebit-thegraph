@@ -17,22 +17,22 @@ import {
 } from "../generated/Onebit-Lightning-Hunter-USDT__OToken/OToken";
 import { transaction, vault, depositor } from "../generated/schema";
 
-function pushDepositor(pool: vault, value: Bytes): void {
-  const array = pool.depositors;
-  for (let i = 0; i < pool.depositors.length; i++) {
-    if (pool.depositors[i].toHexString() == value.toHexString()) return;
+function pushDepositor(vault: vault, value: Bytes): void {
+  const array = vault.depositors;
+  for (let i = 0; i < vault.depositors.length; i++) {
+    if (vault.depositors[i].toHexString() == value.toHexString()) return;
   }
   array.push(value);
-  pool.depositors = array;
+  vault.depositors = array;
 }
 
-function removeDepositor(pool: vault, value: Bytes): void {
+function removeDepositor(vault: vault, value: Bytes): void {
   const array = new Array<Bytes>(0);
-  for (let i = 0; i < pool.depositors.length; i++) {
-    if (pool.depositors[i].toHexString() == value.toHexString()) continue;
-    array.push(pool.depositors[i]);
+  for (let i = 0; i < vault.depositors.length; i++) {
+    if (vault.depositors[i].toHexString() == value.toHexString()) continue;
+    array.push(vault.depositors[i]);
   }
-  pool.depositors = array;
+  vault.depositors = array;
 }
 
 function getDepositorId(
@@ -52,8 +52,8 @@ export function handleBalanceTransfer(event: BalanceTransfer): void {
   const OTokenContract = OToken.bind(event.address);
   const vaultAddress = OTokenContract.VAULT();
   const vaultId = vaultAddress.toHexString();
-  let poolRecord = vault.load(vaultId);
-  if (!poolRecord) return;
+  let vaultRecord = vault.load(vaultId);
+  if (!vaultRecord) return;
 
   const id = event.transaction.hash.toHexString();
   let record = transaction.load(id);
@@ -73,23 +73,23 @@ export function handleBalanceTransfer(event: BalanceTransfer): void {
   let depositorRecord = depositor.load(depositorId);
   if (!depositorRecord) {
     depositorRecord = new depositor(depositorId);
-    depositorRecord.oTokenAddress = poolRecord.oTokenAddress;
+    depositorRecord.oTokenAddress = vaultRecord.oTokenAddress;
     depositorRecord.account = event.params.to;
     depositorRecord.vault = vaultAddress;
     depositorRecord.createTimestamp = event.block.timestamp.toI32();
     depositorRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
     depositorRecord.save();
 
-    pushDepositor(poolRecord, event.params.to);
-    poolRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
-    poolRecord.save();
+    pushDepositor(vaultRecord, event.params.to);
+    vaultRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
+    vaultRecord.save();
   }
 
   const balanceOf = OTokenContract.balanceOf(event.params.from);
   if (balanceOf.isZero()) {
-    removeDepositor(poolRecord, event.params.from);
-    poolRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
-    poolRecord.save();
+    removeDepositor(vaultRecord, event.params.from);
+    vaultRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
+    vaultRecord.save();
   }
 }
 

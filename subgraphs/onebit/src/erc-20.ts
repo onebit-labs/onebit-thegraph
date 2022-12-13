@@ -4,9 +4,9 @@ import { vault, transaction } from "../generated/schema";
 export function handleApproval(event: Approval): void {}
 
 export function handleTransfer(event: Transfer): void {
-  const poolId = event.params.to.toHexString();
-  let poolRecord = vault.load(poolId);
-  if (!poolRecord) return;
+  const vaultId = event.params.to.toHexString();
+  let vaultRecord = vault.load(vaultId);
+  if (!vaultRecord) return;
 
   const id = event.transaction.hash.toHexString();
   let record = transaction.load(id);
