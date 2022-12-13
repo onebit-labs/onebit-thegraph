@@ -272,16 +272,16 @@ export class Withdraw__Params {
   }
 }
 
-export class LendingPool__getConfigurationResultValue0Struct extends ethereum.Tuple {
+export class Vault__getConfigurationResultValue0Struct extends ethereum.Tuple {
   get data(): BigInt {
     return this[0].toBigInt();
   }
 }
 
-export class LendingPool__getReserveDataResultValue0Struct extends ethereum.Tuple {
-  get configuration(): LendingPool__getReserveDataResultValue0ConfigurationStruct {
+export class Vault__getReserveDataResultValue0Struct extends ethereum.Tuple {
+  get configuration(): Vault__getReserveDataResultValue0ConfigurationStruct {
     return changetype<
-      LendingPool__getReserveDataResultValue0ConfigurationStruct
+      Vault__getReserveDataResultValue0ConfigurationStruct
     >(this[0].toTuple());
   }
 
@@ -338,15 +338,15 @@ export class LendingPool__getReserveDataResultValue0Struct extends ethereum.Tupl
   }
 }
 
-export class LendingPool__getReserveDataResultValue0ConfigurationStruct extends ethereum.Tuple {
+export class Vault__getReserveDataResultValue0ConfigurationStruct extends ethereum.Tuple {
   get data(): BigInt {
     return this[0].toBigInt();
   }
 }
 
-export class LendingPool extends ethereum.SmartContract {
-  static bind(address: Address): LendingPool {
-    return new LendingPool("LendingPool", address);
+export class Vault extends ethereum.SmartContract {
+  static bind(address: Address): Vault {
+    return new Vault("Vault", address);
   }
 
   LENDINGPOOL_REVISION(): BigInt {
@@ -430,20 +430,20 @@ export class LendingPool extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 
-  getConfiguration(): LendingPool__getConfigurationResultValue0Struct {
+  getConfiguration(): Vault__getConfigurationResultValue0Struct {
     let result = super.call(
       "getConfiguration",
       "getConfiguration():((uint256))",
       []
     );
 
-    return changetype<LendingPool__getConfigurationResultValue0Struct>(
+    return changetype<Vault__getConfigurationResultValue0Struct>(
       result[0].toTuple()
     );
   }
 
   try_getConfiguration(): ethereum.CallResult<
-    LendingPool__getConfigurationResultValue0Struct
+    Vault__getConfigurationResultValue0Struct
   > {
     let result = super.tryCall(
       "getConfiguration",
@@ -455,26 +455,26 @@ export class LendingPool extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      changetype<LendingPool__getConfigurationResultValue0Struct>(
+      changetype<Vault__getConfigurationResultValue0Struct>(
         value[0].toTuple()
       )
     );
   }
 
-  getReserveData(): LendingPool__getReserveDataResultValue0Struct {
+  getReserveData(): Vault__getReserveDataResultValue0Struct {
     let result = super.call(
       "getReserveData",
       "getReserveData():(((uint256),uint128,int128,uint128,uint128,uint40,uint40,uint40,uint40,uint16,uint16,address,address,uint128))",
       []
     );
 
-    return changetype<LendingPool__getReserveDataResultValue0Struct>(
+    return changetype<Vault__getReserveDataResultValue0Struct>(
       result[0].toTuple()
     );
   }
 
   try_getReserveData(): ethereum.CallResult<
-    LendingPool__getReserveDataResultValue0Struct
+    Vault__getReserveDataResultValue0Struct
   > {
     let result = super.tryCall(
       "getReserveData",
@@ -486,7 +486,7 @@ export class LendingPool extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(
-      changetype<LendingPool__getReserveDataResultValue0Struct>(
+      changetype<Vault__getReserveDataResultValue0Struct>(
         value[0].toTuple()
       )
     );

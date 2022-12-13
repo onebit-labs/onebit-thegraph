@@ -11,7 +11,7 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class lendingPool extends Entity {
+export class vault extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -19,18 +19,18 @@ export class lendingPool extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id != null, "Cannot save lendingPool entity without an ID");
+    assert(id != null, "Cannot save vault entity without an ID");
     if (id) {
       assert(
         id.kind == ValueKind.STRING,
-        `Entities of type lendingPool must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
+        `Entities of type vault must have an ID of type String but the id '${id.displayData()}' is of type ${id.displayKind()}`
       );
-      store.set("lendingPool", id.toString(), this);
+      store.set("vault", id.toString(), this);
     }
   }
 
-  static load(id: string): lendingPool | null {
-    return changetype<lendingPool | null>(store.get("lendingPool", id));
+  static load(id: string): vault | null {
+    return changetype<vault | null>(store.get("vault", id));
   }
 
   get id(): string {
@@ -110,8 +110,8 @@ export class netValue extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get lendingPool(): Bytes | null {
-    let value = this.get("lendingPool");
+  get vault(): Bytes | null {
+    let value = this.get("vault");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -119,11 +119,11 @@ export class netValue extends Entity {
     }
   }
 
-  set lendingPool(value: Bytes | null) {
+  set vault(value: Bytes | null) {
     if (!value) {
-      this.unset("lendingPool");
+      this.unset("vault");
     } else {
-      this.set("lendingPool", Value.fromBytes(<Bytes>value));
+      this.set("vault", Value.fromBytes(<Bytes>value));
     }
   }
 
@@ -222,8 +222,8 @@ export class transaction extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get lendingPool(): Bytes | null {
-    let value = this.get("lendingPool");
+  get vault(): Bytes | null {
+    let value = this.get("vault");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -231,11 +231,11 @@ export class transaction extends Entity {
     }
   }
 
-  set lendingPool(value: Bytes | null) {
+  set vault(value: Bytes | null) {
     if (!value) {
-      this.unset("lendingPool");
+      this.unset("vault");
     } else {
-      this.set("lendingPool", Value.fromBytes(<Bytes>value));
+      this.set("vault", Value.fromBytes(<Bytes>value));
     }
   }
 
@@ -341,8 +341,8 @@ export class portfolioTerm extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get lendingPool(): Bytes | null {
-    let value = this.get("lendingPool");
+  get vault(): Bytes | null {
+    let value = this.get("vault");
     if (!value || value.kind == ValueKind.NULL) {
       return null;
     } else {
@@ -350,11 +350,11 @@ export class portfolioTerm extends Entity {
     }
   }
 
-  set lendingPool(value: Bytes | null) {
+  set vault(value: Bytes | null) {
     if (!value) {
-      this.unset("lendingPool");
+      this.unset("vault");
     } else {
-      this.set("lendingPool", Value.fromBytes(<Bytes>value));
+      this.set("vault", Value.fromBytes(<Bytes>value));
     }
   }
 
@@ -507,13 +507,13 @@ export class depositor extends Entity {
     this.set("account", Value.fromBytes(value));
   }
 
-  get lendingPool(): Bytes {
-    let value = this.get("lendingPool");
+  get vault(): Bytes {
+    let value = this.get("vault");
     return value!.toBytes();
   }
 
-  set lendingPool(value: Bytes) {
-    this.set("lendingPool", Value.fromBytes(value));
+  set vault(value: Bytes) {
+    this.set("vault", Value.fromBytes(value));
   }
 
   get oTokenAddress(): Bytes {

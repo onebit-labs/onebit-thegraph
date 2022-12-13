@@ -1,5 +1,5 @@
-type lendingPool @entity {
-  id: ID! # LendingPoolAddress
+type vault @entity {
+  id: ID! # VaultAddress
   term: Int!
   depositors: [Bytes!]!
   lastUpdateTimestamp: Int!
@@ -8,7 +8,7 @@ type lendingPool @entity {
 
 type netValue @entity {
   id: ID!
-  lendingPool: Bytes #LendingPoolAddress
+  vault: Bytes #VaultAddress
   reserveNormalizedIncome: BigInt!
   previousNetValue: BigInt!
   newNetValue: BigInt!
@@ -20,7 +20,7 @@ type netValue @entity {
 
 type transaction @entity {
   id: ID!
-  lendingPool: Bytes #LendingPoolAddress
+  vault: Bytes #VaultAddress
   to: Bytes #transaction to address
   from: Bytes #transaction from address
   type: Int! # 1:Deposit, 2:Withdraw, 3:FundTransfer, 4:BalanceTransfer
@@ -31,7 +31,7 @@ type transaction @entity {
 
 type portfolioTerm @entity {
   id: ID!
-  lendingPool: Bytes #LendingPoolAddress
+  vault: Bytes #VaultAddress
   previousAssetsUnderManagement: BigInt!
   previousScaledAssetsUnderManagement: BigInt!
   previousNetValue: BigInt!
@@ -47,9 +47,9 @@ type portfolioTerm @entity {
 }
 
 type depositor @entity {
-  id: ID! #lendingPool+account
+  id: ID! #vault+account
   account: Bytes!
-  lendingPool: Bytes! #LendingPoolAddress
+  vault: Bytes! #VaultAddress
   oTokenAddress: Bytes! #oTokenAddress
   createTimestamp: Int!
   lastUpdateTimestamp: Int!

@@ -15,9 +15,9 @@ import {
   Mint,
   Transfer,
 } from "../generated/Onebit-Lightning-Hunter-USDT__OToken/OToken";
-import { transaction, lendingPool, depositor } from "../generated/schema";
+import { transaction, vault, depositor } from "../generated/schema";
 
-function pushDepositor(pool: lendingPool, value: Bytes): void {
+function pushDepositor(pool: vault, value: Bytes): void {
   const array = pool.depositors;
   for (let i = 0; i < pool.depositors.length; i++) {
     if (pool.depositors[i].toHexString() == value.toHexString()) return;
@@ -26,7 +26,7 @@ function pushDepositor(pool: lendingPool, value: Bytes): void {
   pool.depositors = array;
 }
 
-function removeDepositor(pool: lendingPool, value: Bytes): void {
+function removeDepositor(pool: vault, value: Bytes): void {
   const array = new Array<Bytes>(0);
   for (let i = 0; i < pool.depositors.length; i++) {
     if (pool.depositors[i].toHexString() == value.toHexString()) continue;
@@ -36,13 +36,13 @@ function removeDepositor(pool: lendingPool, value: Bytes): void {
 }
 
 function getDepositorId(
-  lendingPoolAddress: Bytes,
+  vaultAddress: Bytes,
   accountAddress: Bytes
 ): string {
-  const lendingPool = lendingPoolAddress.toHexString();
+  const vault = vaultAddress.toHexString();
   const account = accountAddress.toHexString();
   return crypto
-    .keccak256(ByteArray.fromUTF8(lendingPool + account))
+    .keccak256(ByteArray.fromUTF8(vault + account))
     .toHexString();
 }
 
@@ -50,9 +50,9 @@ export function handleApproval(event: Approval): void {}
 
 export function handleBalanceTransfer(event: BalanceTransfer): void {
   const OTokenContract = OToken.bind(event.address);
-  const lendingPoolAddress = OTokenContract.POOL();
-  const lendingPoolId = lendingPoolAddress.toHexString();
-  let poolRecord = lendingPool.load(lendingPoolId);
+  const vaultAddress = OTokenContract.POOL();
+  const vaultId = vaultAddress.toHexString();
+  let poolRecord = vault.load(vaultId);
   if (!poolRecord) return;
 
   const id = event.transaction.hash.toHexString();
@@ -60,7 +60,7 @@ export function handleBalanceTransfer(event: BalanceTransfer): void {
   if (!record) {
     record = new transaction(id);
   }
-  record.lendingPool = lendingPoolAddress;
+  record.vault = vaultAddress;
   record.type = 4;
   record.amount = event.params.value;
   record.account = event.params.from;
@@ -69,13 +69,13 @@ export function handleBalanceTransfer(event: BalanceTransfer): void {
   record.from = event.params.from;
   record.save();
 
-  const depositorId = getDepositorId(lendingPoolAddress, event.params.to);
+  const depositorId = getDepositorId(vaultAddress, event.params.to);
   let depositorRecord = depositor.load(depositorId);
   if (!depositorRecord) {
     depositorRecord = new depositor(depositorId);
     depositorRecord.oTokenAddress = poolRecord.oTokenAddress;
     depositorRecord.account = event.params.to;
-    depositorRecord.lendingPool = lendingPoolAddress;
+    depositorRecord.vault = vaultAddress;
     depositorRecord.createTimestamp = event.block.timestamp.toI32();
     depositorRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
     depositorRecord.save();

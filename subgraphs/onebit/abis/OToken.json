@@ -212,7 +212,7 @@
     "inputs": [],
     "name": "POOL",
     "outputs": [
-      { "internalType": "contract ILendingPool", "name": "", "type": "address" }
+      { "internalType": "contract IVault", "name": "", "type": "address" }
     ],
     "stateMutability": "view",
     "type": "function"
@@ -322,7 +322,7 @@
   {
     "inputs": [
       {
-        "internalType": "contract ILendingPool",
+        "internalType": "contract IVault",
         "name": "pool",
         "type": "address"
       },

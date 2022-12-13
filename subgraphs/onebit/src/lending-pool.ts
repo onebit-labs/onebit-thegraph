@@ -6,7 +6,7 @@ import {
   Address,
 } from "@graphprotocol/graph-ts";
 import {
-  LendingPool,
+  Vault,
   Deposit,
   FundAddressUpdated,
   FundDeposit,
@@ -18,17 +18,17 @@ import {
   Withdraw,
   PurchaseEndTimestampMoved,
   RedemptionBeginTimestampMoved,
-} from "../generated/Onebit-Lightning-Hunter-USDT/LendingPool";
+} from "../generated/Onebit-Lightning-Hunter-USDT/Vault";
 import { OToken } from "../generated/Onebit-Lightning-Hunter-USDT/OToken";
 import {
   transaction,
-  lendingPool,
+  vault,
   portfolioTerm,
   netValue,
   depositor,
 } from "../generated/schema";
 
-function pushDepositor(pool: lendingPool, value: Bytes): void {
+function pushDepositor(pool: vault, value: Bytes): void {
   const array = pool.depositors;
   for (let i = 0; i < pool.depositors.length; i++) {
     if (pool.depositors[i].toHexString() == value.toHexString()) return;
@@ -37,7 +37,7 @@ function pushDepositor(pool: lendingPool, value: Bytes): void {
   pool.depositors = array;
 }
 
-function removeDepositor(pool: lendingPool, value: Bytes): void {
+function removeDepositor(pool: vault, value: Bytes): void {
   const array = new Array<Bytes>(0);
   for (let i = 0; i < pool.depositors.length; i++) {
     if (pool.depositors[i].toHexString() == value.toHexString()) continue;
@@ -47,13 +47,13 @@ function removeDepositor(pool: lendingPool, value: Bytes): void {
 }
 
 function getDepositorId(
-  lendingPoolAddress: Bytes,
+  vaultAddress: Bytes,
   accountAddress: Bytes
 ): string {
-  const lendingPool = lendingPoolAddress.toHexString();
+  const vault = vaultAddress.toHexString();
   const account = accountAddress.toHexString();
   return crypto
-    .keccak256(ByteArray.fromUTF8(lendingPool + account))
+    .keccak256(ByteArray.fromUTF8(vault + account))
     .toHexString();
 }
 
@@ -64,26 +64,26 @@ export function handleDeposit(event: Deposit): void {
     record = new transaction(id);
   }
 
-  record.lendingPool = event.transaction.to;
+  record.vault = event.transaction.to;
   record.type = 1;
   record.amount = event.params.amount;
   record.account = event.params.onBehalfOf;
   record.createTimestamp = event.block.timestamp.toI32();
-  record.to = record.lendingPool;
+  record.to = record.vault;
   record.from = record.account;
 
   record.save();
 
-  const lendingPoolAddress = event.transaction.to;
-  if (lendingPoolAddress) {
-    const poolId = lendingPoolAddress.toHexString();
-    let poolRecord = lendingPool.load(poolId);
+  const vaultAddress = event.transaction.to;
+  if (vaultAddress) {
+    const poolId = vaultAddress.toHexString();
+    let poolRecord = vault.load(poolId);
     if (!poolRecord) {
-      poolRecord = new lendingPool(poolId);
+      poolRecord = new vault(poolId);
       poolRecord.term = 1;
       poolRecord.depositors = new Array<Bytes>(0);
 
-      const contract = LendingPool.bind(lendingPoolAddress);
+      const contract = Vault.bind(vaultAddress);
       const reserveData = contract.getReserveData();
 
       poolRecord.oTokenAddress = reserveData.oTokenAddress;
@@ -93,7 +93,7 @@ export function handleDeposit(event: Deposit): void {
         portfolioTermRecord = new portfolioTerm(id);
       }
 
-      portfolioTermRecord.lendingPool = Bytes.fromHexString(poolId);
+      portfolioTermRecord.vault = Bytes.fromHexString(poolId);
       portfolioTermRecord.previousNetValue = BigInt.fromI32(0);
       portfolioTermRecord.previousAssetsUnderManagement = BigInt.fromI32(0);
       portfolioTermRecord.previousScaledAssetsUnderManagement = BigInt.fromI32(
@@ -115,13 +115,13 @@ export function handleDeposit(event: Deposit): void {
     pushDepositor(poolRecord, record.account);
     poolRecord.save();
 
-    const depositorId = getDepositorId(lendingPoolAddress, record.account);
+    const depositorId = getDepositorId(vaultAddress, record.account);
     let depositorRecord = depositor.load(depositorId);
     if (!depositorRecord) {
       depositorRecord = new depositor(depositorId);
       depositorRecord.oTokenAddress = poolRecord.oTokenAddress;
       depositorRecord.account = record.account;
-      depositorRecord.lendingPool = lendingPoolAddress;
+      depositorRecord.vault = vaultAddress;
       depositorRecord.createTimestamp = event.block.timestamp.toI32();
       depositorRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
       depositorRecord.save();
@@ -138,12 +138,12 @@ export function handleFundDeposit(event: FundDeposit): void {
     record = new transaction(id);
   }
 
-  record.lendingPool = event.transaction.to;
+  record.vault = event.transaction.to;
   record.type = 3;
   record.amount = event.params.amount;
   record.account = event.params.from;
   record.createTimestamp = event.block.timestamp.toI32();
-  record.to = record.lendingPool;
+  record.to = record.vault;
   record.from = record.account;
 
   record.save();
@@ -156,13 +156,13 @@ export function handleFundWithdraw(event: FundWithdraw): void {
     record = new transaction(id);
   }
 
-  record.lendingPool = event.transaction.to;
+  record.vault = event.transaction.to;
   record.type = 3;
   record.amount = event.params.amount;
   record.account = event.params.to;
   record.createTimestamp = event.block.timestamp.toI32();
   record.to = record.account;
-  record.from = record.lendingPool;
+  record.from = record.vault;
 
   record.save();
 }
@@ -174,7 +174,7 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
     record = new netValue(id);
   }
 
-  record.lendingPool = event.transaction.to;
+  record.vault = event.transaction.to;
   record.previousNetValue = event.params.previousNetValue;
   record.newNetValue = event.params.newNetValue;
   record.previousLiquidityIndex = event.params.previousLiquidityIndex;
@@ -184,14 +184,14 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
   record.reserveNormalizedIncome = BigInt.fromI32(0);
   record.save();
 
-  const lendingPoolAddress = event.transaction.to;
-  if (!lendingPoolAddress) return;
-  const contract = LendingPool.bind(lendingPoolAddress);
+  const vaultAddress = event.transaction.to;
+  if (!vaultAddress) return;
+  const contract = Vault.bind(vaultAddress);
   record.reserveNormalizedIncome = contract.getReserveNormalizedIncome();
   record.save();
 
-  const poolId = lendingPoolAddress.toHexString();
-  const poolRecord = lendingPool.load(poolId);
+  const poolId = vaultAddress.toHexString();
+  const poolRecord = vault.load(poolId);
   if (!poolRecord) return;
   poolRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolRecord.save();
@@ -200,17 +200,17 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
 export function handlePaused(event: Paused): void {}
 
 export function handlePeriodInitialized(event: PeriodInitialized): void {
-  const lendingPoolAddress = event.transaction.to;
-  if (!lendingPoolAddress) return;
-  const poolId = lendingPoolAddress.toHexString();
-  const poolRecord = lendingPool.load(poolId);
+  const vaultAddress = event.transaction.to;
+  if (!vaultAddress) return;
+  const poolId = vaultAddress.toHexString();
+  const poolRecord = vault.load(poolId);
   if (!poolRecord) return;
   poolRecord.term = poolRecord.term + 1;
   poolRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
   poolRecord.save();
 
   const id = event.transaction.hash.toHexString();
-  const contract = LendingPool.bind(lendingPoolAddress);
+  const contract = Vault.bind(vaultAddress);
   const normalizedIncome = contract.getReserveNormalizedIncome();
 
   const oTokenAddress = Address.fromBytes(poolRecord.oTokenAddress);
@@ -223,7 +223,7 @@ export function handlePeriodInitialized(event: PeriodInitialized): void {
     portfolioTermRecord = new portfolioTerm(id);
   }
 
-  portfolioTermRecord.lendingPool = Bytes.fromHexString(poolId);
+  portfolioTermRecord.vault = Bytes.fromHexString(poolId);
   portfolioTermRecord.previousNetValue = normalizedIncome;
   portfolioTermRecord.previousAssetsUnderManagement = totalSupply;
   portfolioTermRecord.previousScaledAssetsUnderManagement = scaledTotalSupply;
@@ -248,19 +248,19 @@ export function handleWithdraw(event: Withdraw): void {
     record = new transaction(id);
   }
 
-  record.lendingPool = event.transaction.to;
+  record.vault = event.transaction.to;
   record.type = 2;
   record.amount = event.params.amount;
   record.account = event.params.to;
   record.createTimestamp = event.block.timestamp.toI32();
   record.to = record.account;
-  record.from = record.lendingPool;
+  record.from = record.vault;
 
   record.save();
 
-  const lendingPoolAddress = event.transaction.to;
-  if (!lendingPoolAddress) return;
-  const depositorId = getDepositorId(lendingPoolAddress, record.account);
+  const vaultAddress = event.transaction.to;
+  if (!vaultAddress) return;
+  const depositorId = getDepositorId(vaultAddress, record.account);
   let depositorRecord = depositor.load(depositorId);
   if (depositorRecord) {
     const oTokenAddress = Address.fromBytes(depositorRecord.oTokenAddress);
@@ -268,8 +268,8 @@ export function handleWithdraw(event: Withdraw): void {
     const balanceOf = OTokenContract.balanceOf(event.params.to);
 
     if (balanceOf.isZero()) {
-      const poolId = lendingPoolAddress.toHexString();
-      let poolRecord = lendingPool.load(poolId);
+      const poolId = vaultAddress.toHexString();
+      let poolRecord = vault.load(poolId);
       if (!poolRecord) return;
       removeDepositor(poolRecord, record.account);
       poolRecord.save();

@@ -259,7 +259,7 @@
     "name": "getAddressesProvider",
     "outputs": [
       {
-        "internalType": "contract ILendingPoolAddressesProvider",
+        "internalType": "contract IVaultAddressesProvider",
         "name": "",
         "type": "address"
       }
@@ -391,7 +391,7 @@
   {
     "inputs": [
       {
-        "internalType": "contract ILendingPoolAddressesProvider",
+        "internalType": "contract IVaultAddressesProvider",
         "name": "provider",
         "type": "address"
       }
