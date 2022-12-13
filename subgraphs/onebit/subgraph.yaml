@@ -28,8 +28,6 @@ dataSources:
       abis:
         - name: Vault
           file: ./abis/Vault.json
-        - name: OToken
-          file: ./abis/OToken.json
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
           handler: handleDeposit
@@ -53,7 +51,7 @@ dataSources:
           handler: handleUnpaused
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
-      file: ./src/lending-pool.ts
+      file: ./src/vault.ts
   - kind: ethereum
     name: Onebit-Lightning-Hunter-USDT__OToken
     network: goerli
@@ -115,8 +113,6 @@ dataSources:
       abis:
         - name: Vault
           file: ./abis/Vault.json
-        - name: OToken
-          file: ./abis/OToken.json
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
           handler: handleDeposit
@@ -140,7 +136,7 @@ dataSources:
           handler: handleUnpaused
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
-      file: ./src/lending-pool.ts
+      file: ./src/vault.ts
   - kind: ethereum
     name: Onebit-Smart-Trend-USDT__OToken
     network: goerli
@@ -201,8 +197,6 @@ dataSources:
       abis:
         - name: Vault
           file: ./abis/Vault.json
-        - name: OToken
-          file: ./abis/OToken.json
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
           handler: handleDeposit
@@ -226,7 +220,7 @@ dataSources:
           handler: handleUnpaused
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
-      file: ./src/lending-pool.ts
+      file: ./src/vault.ts
   - kind: ethereum
     name: Onebit-Smart-Trend-BTC__OToken
     network: goerli
@@ -287,8 +281,6 @@ dataSources:
       abis:
         - name: Vault
           file: ./abis/Vault.json
-        - name: OToken
-          file: ./abis/OToken.json
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
           handler: handleDeposit
@@ -312,7 +304,7 @@ dataSources:
           handler: handleUnpaused
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
-      file: ./src/lending-pool.ts
+      file: ./src/vault.ts
   - kind: ethereum
     name: Onebit-Smart-Trend-USDT-Demo__OToken
     network: goerli
@@ -373,8 +365,6 @@ dataSources:
       abis:
         - name: Vault
           file: ./abis/Vault.json
-        - name: OToken
-          file: ./abis/OToken.json
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
           handler: handleDeposit
@@ -398,7 +388,7 @@ dataSources:
           handler: handleUnpaused
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
-      file: ./src/lending-pool.ts
+      file: ./src/vault.ts
   - kind: ethereum
     name: Onebit-Smart-Trend-USDT-Whitelist-Test__OToken
     network: goerli

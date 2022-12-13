@@ -50,7 +50,7 @@ export function handleApproval(event: Approval): void {}
 
 export function handleBalanceTransfer(event: BalanceTransfer): void {
   const OTokenContract = OToken.bind(event.address);
-  const vaultAddress = OTokenContract.POOL();
+  const vaultAddress = OTokenContract.VAULT();
   const vaultId = vaultAddress.toHexString();
   let poolRecord = vault.load(vaultId);
   if (!poolRecord) return;

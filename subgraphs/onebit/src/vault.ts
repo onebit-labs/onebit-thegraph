@@ -19,7 +19,7 @@ import {
   PurchaseEndTimestampMoved,
   RedemptionBeginTimestampMoved,
 } from "../generated/Onebit-Lightning-Hunter-USDT/Vault";
-import { OToken } from "../generated/Onebit-Lightning-Hunter-USDT/OToken";
+import { OToken } from "../generated/Onebit-Lightning-Hunter-USDT__OToken/OToken";
 import {
   transaction,
   vault,
