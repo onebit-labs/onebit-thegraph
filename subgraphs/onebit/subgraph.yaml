@@ -175,7 +175,7 @@ dataSources:
     name: Onebit-Smart-Trend-BTC
     network: goerli
     source:
-      address: "0x7a61b21cf175b60095f85eb66e34ffabf1c07fe9"
+      address: "0x888f74feb0f41cf8ec24b230ad7b1b527312af42"
       abi: Vault
     mapping:
       kind: ethereum/events
@@ -224,7 +224,7 @@ dataSources:
     name: Onebit-Smart-Trend-BTC__OToken
     network: goerli
     source:
-      address: "0x3cdbc4bc3eec850d30f7a676806ff18815331865"
+      address: "0x6bed7692fa0eaf88c94c14586f0d0c45872f0510"
       abi: OToken
     mapping:
       kind: ethereum/events
