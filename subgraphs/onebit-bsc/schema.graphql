@@ -1,0 +1,56 @@
+type vault @entity {
+  id: ID! # VaultAddress
+  term: Int!
+  depositors: [Bytes!]!
+  lastUpdateTimestamp: Int!
+  oTokenAddress: Bytes! #oTokenAddress
+}
+
+type netValue @entity {
+  id: ID!
+  vault: Bytes #VaultAddress
+  reserveNormalizedIncome: BigInt!
+  previousNetValue: BigInt!
+  newNetValue: BigInt!
+  previousLiquidityIndex: BigInt!
+  newLiquidityIndex: BigInt!
+  currentLiquidityRate: BigInt!
+  createTimestamp: Int!
+}
+
+type transaction @entity {
+  id: ID!
+  vault: Bytes #VaultAddress
+  to: Bytes #transaction to address
+  from: Bytes #transaction from address
+  type: Int! # 1:Deposit, 2:Withdraw, 3:FundTransfer, 4:BalanceTransfer
+  account: Bytes!
+  amount: BigInt!
+  createTimestamp: Int!
+}
+
+type portfolioTerm @entity {
+  id: ID!
+  vault: Bytes #VaultAddress
+  previousAssetsUnderManagement: BigInt!
+  previousScaledAssetsUnderManagement: BigInt!
+  previousNetValue: BigInt!
+  term: Int!
+  createTimestamp: Int!
+  redemptionBeginTimestamp: Int!
+  purchaseBeginTimestamp: Int!
+  purchaseEndTimestamp: Int!
+  previousLiquidityIndex: BigInt!
+  managementFeeRate: Int!
+  performanceFeeRate: Int!
+  previousDepositors: Int!
+}
+
+type depositor @entity {
+  id: ID! #vault+account
+  account: Bytes!
+  vault: Bytes! #VaultAddress
+  oTokenAddress: Bytes! #oTokenAddress
+  createTimestamp: Int!
+  lastUpdateTimestamp: Int!
+}
