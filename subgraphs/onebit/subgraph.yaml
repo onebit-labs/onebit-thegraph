@@ -9,6 +9,7 @@ dataSources:
     source:
       address: "0x249008409964a137ad50322bb03691b27347206c"
       abi: Vault
+      startBlock: 8127194
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -60,6 +61,7 @@ dataSources:
     source:
       address: "0xf2f46bc53f6239c620384632ec6a482386999964"
       abi: OToken
+      startBlock: 8127194
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -95,6 +97,7 @@ dataSources:
     source:
       address: "0xc097dc3a530c4a2dbcf9799487fefa6f6dd483a3"
       abi: Vault
+      startBlock: 8127194
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -146,6 +149,7 @@ dataSources:
     source:
       address: "0x3979c568a0118dca44eef22396ac5d604ac73c46"
       abi: OToken
+      startBlock: 8127194
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -181,6 +185,7 @@ dataSources:
     source:
       address: "0x888f74feb0f41cf8ec24b230ad7b1b527312af42"
       abi: Vault
+      startBlock: 8127194
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -232,6 +237,7 @@ dataSources:
     source:
       address: "0x6bed7692fa0eaf88c94c14586f0d0c45872f0510"
       abi: OToken
+      startBlock: 8127194
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -267,6 +273,7 @@ dataSources:
     source:
       address: "0xa0efcba5e7732c7552bd6a946de8857223c70f00"
       abi: Vault
+      startBlock: 8127194
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -318,6 +325,7 @@ dataSources:
     source:
       address: "0xd8c962825476622d9a370b567c2d95c323f5b168"
       abi: OToken
+      startBlock: 8127194
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
