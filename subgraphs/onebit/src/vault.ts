@@ -8,14 +8,12 @@ import {
 import {
   Vault,
   Deposit,
-  FundAddressUpdated,
   FundDeposit,
   FundWithdraw,
   NetValueUpdated,
-  Paused,
   PeriodInitialized,
-  Unpaused,
   Withdraw,
+  PurchaseBeginTimestampMoved,
   PurchaseEndTimestampMoved,
   RedemptionBeginTimestampMoved,
 } from "../generated/Onebit-Lightning-Hunter-USDT/Vault";
@@ -46,15 +44,15 @@ function removeDepositor(vault: vault, value: Bytes): void {
   vault.depositors = array;
 }
 
-function getDepositorId(
-  vaultAddress: Bytes,
-  accountAddress: Bytes
-): string {
+function getDepositorId(vaultAddress: Bytes, accountAddress: Bytes): string {
   const vault = vaultAddress.toHexString();
   const account = accountAddress.toHexString();
-  return crypto
-    .keccak256(ByteArray.fromUTF8(vault + account))
-    .toHexString();
+  return crypto.keccak256(ByteArray.fromUTF8(vault + account)).toHexString();
+}
+function getPortfolioTermId(vaultAddress: Bytes, term: number): string {
+  const vault = vaultAddress.toHexString();
+  const account = term.toString();
+  return crypto.keccak256(ByteArray.fromUTF8(vault + account)).toHexString();
 }
 
 export function handleDeposit(event: Deposit): void {
@@ -88,9 +86,13 @@ export function handleDeposit(event: Deposit): void {
 
       vaultRecord.oTokenAddress = reserveData.oTokenAddress;
 
-      let portfolioTermRecord = portfolioTerm.load(id);
+      const portfolioTermId = getPortfolioTermId(
+        vaultAddress,
+        vaultRecord.term
+      );
+      let portfolioTermRecord = portfolioTerm.load(portfolioTermId);
       if (!portfolioTermRecord) {
-        portfolioTermRecord = new portfolioTerm(id);
+        portfolioTermRecord = new portfolioTerm(portfolioTermId);
       }
 
       portfolioTermRecord.vault = Bytes.fromHexString(vaultId);
@@ -128,8 +130,6 @@ export function handleDeposit(event: Deposit): void {
     }
   }
 }
-
-export function handleFundAddressUpdated(event: FundAddressUpdated): void {}
 
 export function handleFundDeposit(event: FundDeposit): void {
   const id = event.transaction.hash.toHexString();
@@ -197,8 +197,6 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
   vaultRecord.save();
 }
 
-export function handlePaused(event: Paused): void {}
-
 export function handlePeriodInitialized(event: PeriodInitialized): void {
   const vaultAddress = event.transaction.to;
   if (!vaultAddress) return;
@@ -209,7 +207,6 @@ export function handlePeriodInitialized(event: PeriodInitialized): void {
   vaultRecord.lastUpdateTimestamp = event.block.timestamp.toI32();
   vaultRecord.save();
 
-  const id = event.transaction.hash.toHexString();
   const contract = Vault.bind(vaultAddress);
   const normalizedIncome = contract.getReserveNormalizedIncome();
 
@@ -218,9 +215,10 @@ export function handlePeriodInitialized(event: PeriodInitialized): void {
   const totalSupply = OTokenContract.totalSupply();
   const scaledTotalSupply = OTokenContract.scaledTotalSupply();
 
-  let portfolioTermRecord = portfolioTerm.load(id);
+  const portfolioTermId = getPortfolioTermId(vaultAddress, vaultRecord.term);
+  let portfolioTermRecord = portfolioTerm.load(portfolioTermId);
   if (!portfolioTermRecord) {
-    portfolioTermRecord = new portfolioTerm(id);
+    portfolioTermRecord = new portfolioTerm(portfolioTermId);
   }
 
   portfolioTermRecord.vault = Bytes.fromHexString(vaultId);
@@ -239,7 +237,6 @@ export function handlePeriodInitialized(event: PeriodInitialized): void {
   portfolioTermRecord.performanceFeeRate = event.params.performanceFeeRate;
   portfolioTermRecord.save();
 }
-export function handleUnpaused(event: Unpaused): void {}
 
 export function handleWithdraw(event: Withdraw): void {
   const id = event.transaction.hash.toHexString();
@@ -277,10 +274,53 @@ export function handleWithdraw(event: Withdraw): void {
   }
 }
 
+export function handlePurchaseBeginTimestampMoved(
+  event: PurchaseBeginTimestampMoved
+): void {
+  const vaultAddress = event.address;
+  const vaultId = vaultAddress.toHexString();
+  const vaultRecord = vault.load(vaultId);
+  if (!vaultRecord) return;
+
+  const portfolioTermId = getPortfolioTermId(vaultAddress, vaultRecord.term);
+  let portfolioTermRecord = portfolioTerm.load(portfolioTermId);
+  if (!portfolioTermRecord) {
+    portfolioTermRecord = new portfolioTerm(portfolioTermId);
+  }
+  portfolioTermRecord.purchaseBeginTimestamp = event.params.newTimetamp.toI32();
+  portfolioTermRecord.save();
+}
+
 export function handlePurchaseEndTimestampMoved(
   event: PurchaseEndTimestampMoved
-): void {}
+): void {
+  const vaultAddress = event.address;
+  const vaultId = vaultAddress.toHexString();
+  const vaultRecord = vault.load(vaultId);
+  if (!vaultRecord) return;
+
+  const portfolioTermId = getPortfolioTermId(vaultAddress, vaultRecord.term);
+  let portfolioTermRecord = portfolioTerm.load(portfolioTermId);
+  if (!portfolioTermRecord) {
+    portfolioTermRecord = new portfolioTerm(portfolioTermId);
+  }
+  portfolioTermRecord.purchaseEndTimestamp = event.params.newTimetamp.toI32();
+  portfolioTermRecord.save();
+}
 
 export function handleRedemptionBeginTimestampMoved(
   event: RedemptionBeginTimestampMoved
-): void {}
+): void {
+  const vaultAddress = event.address;
+  const vaultId = vaultAddress.toHexString();
+  const vaultRecord = vault.load(vaultId);
+  if (!vaultRecord) return;
+
+  const portfolioTermId = getPortfolioTermId(vaultAddress, vaultRecord.term);
+  let portfolioTermRecord = portfolioTerm.load(portfolioTermId);
+  if (!portfolioTermRecord) {
+    portfolioTermRecord = new portfolioTerm(portfolioTermId);
+  }
+  portfolioTermRecord.redemptionBeginTimestamp = event.params.newTimetamp.toI32();
+  portfolioTermRecord.save();
+}
