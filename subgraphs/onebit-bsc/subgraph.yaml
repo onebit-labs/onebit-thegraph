@@ -16,15 +16,13 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - Deposit
-        - FundAddressUpdated
         - FundDeposit
         - FundWithdraw
         - NetValueUpdated
-        - Paused
         - PeriodInitialized
+        - PurchaseBeginTimestampMoved
         - PurchaseEndTimestampMoved
         - RedemptionBeginTimestampMoved
-        - Unpaused
         - Withdraw
       abis:
         - name: Vault
@@ -34,24 +32,20 @@ dataSources:
       eventHandlers:
         - event: Deposit(indexed address,indexed address,uint256,indexed uint16)
           handler: handleDeposit
-        - event: FundAddressUpdated(indexed address)
-          handler: handleFundAddressUpdated
         - event: FundDeposit(indexed address,uint256)
           handler: handleFundDeposit
         - event: FundWithdraw(indexed address,uint256)
           handler: handleFundWithdraw
         - event: NetValueUpdated(uint256,uint256,uint256,uint256,int256)
           handler: handleNetValueUpdated
-        - event: Paused()
-          handler: handlePaused
         - event: PeriodInitialized(uint256,uint40,uint40,uint40,uint16,uint16)
           handler: handlePeriodInitialized
         - event: PurchaseEndTimestampMoved(uint40,uint40)
           handler: handlePurchaseEndTimestampMoved
         - event: RedemptionBeginTimestampMoved(uint40,uint40)
           handler: handleRedemptionBeginTimestampMoved
-        - event: Unpaused()
-          handler: handleUnpaused
+        - event: PurchaseBeginTimestampMoved(uint40,uint40)
+          handler: handlePurchaseBeginTimestampMoved
         - event: Withdraw(indexed address,indexed address,uint256)
           handler: handleWithdraw
       file: ./src/vault.ts

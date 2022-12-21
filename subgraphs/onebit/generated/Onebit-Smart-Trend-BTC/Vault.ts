@@ -210,6 +210,28 @@ export class PeriodInitialized__Params {
   }
 }
 
+export class PurchaseBeginTimestampMoved extends ethereum.Event {
+  get params(): PurchaseBeginTimestampMoved__Params {
+    return new PurchaseBeginTimestampMoved__Params(this);
+  }
+}
+
+export class PurchaseBeginTimestampMoved__Params {
+  _event: PurchaseBeginTimestampMoved;
+
+  constructor(event: PurchaseBeginTimestampMoved) {
+    this._event = event;
+  }
+
+  get previousTimestamp(): BigInt {
+    return this._event.parameters[0].value.toBigInt();
+  }
+
+  get newTimetamp(): BigInt {
+    return this._event.parameters[1].value.toBigInt();
+  }
+}
+
 export class PurchaseEndTimestampMoved extends ethereum.Event {
   get params(): PurchaseEndTimestampMoved__Params {
     return new PurchaseEndTimestampMoved__Params(this);
@@ -1056,6 +1078,36 @@ export class MoveTheLockPeriodCall__Outputs {
   _call: MoveTheLockPeriodCall;
 
   constructor(call: MoveTheLockPeriodCall) {
+    this._call = call;
+  }
+}
+
+export class MoveThePurchasePeriodCall extends ethereum.Call {
+  get inputs(): MoveThePurchasePeriodCall__Inputs {
+    return new MoveThePurchasePeriodCall__Inputs(this);
+  }
+
+  get outputs(): MoveThePurchasePeriodCall__Outputs {
+    return new MoveThePurchasePeriodCall__Outputs(this);
+  }
+}
+
+export class MoveThePurchasePeriodCall__Inputs {
+  _call: MoveThePurchasePeriodCall;
+
+  constructor(call: MoveThePurchasePeriodCall) {
+    this._call = call;
+  }
+
+  get newPurchaseBeginTimestamp(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+}
+
+export class MoveThePurchasePeriodCall__Outputs {
+  _call: MoveThePurchasePeriodCall;
+
+  constructor(call: MoveThePurchasePeriodCall) {
     this._call = call;
   }
 }
