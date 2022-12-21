@@ -106,7 +106,9 @@ export function handleDeposit(event: Deposit): void {
       portfolioTermRecord.purchaseBeginTimestamp = reserveData.purchaseBeginTimestamp.toI32();
       portfolioTermRecord.redemptionBeginTimestamp = reserveData.redemptionBeginTimestamp.toI32();
       portfolioTermRecord.purchaseEndTimestamp = reserveData.purchaseEndTimestamp.toI32();
-      portfolioTermRecord.previousLiquidityIndex = BigInt.fromI32(0);
+      portfolioTermRecord.previousLiquidityIndex = BigInt.fromString(
+        "1000000000000000000000000000"
+      );
       portfolioTermRecord.previousDepositors = 0;
       portfolioTermRecord.managementFeeRate = reserveData.managementFeeRate;
       portfolioTermRecord.performanceFeeRate = reserveData.performanceFeeRate;
