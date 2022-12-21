@@ -2,16 +2,16 @@ import { Address } from "@graphprotocol/graph-ts";
 import { Transfer } from "../generated/USDT/ERC20";
 import { transaction } from "../generated/schema";
 
-const vaults: string[] = ["0x3c997b030b643a823a170755a1640d5d2778d0ba"];
-function isVault(vault: Address): i32 {
-  for (let i = 0; i < vaults.length; i++) {
-    if (vaults[i] == vault.toHexString()) return 1;
+const OTokens: string[] = ["0xe48ead461f4f696b11aaf74e0d82d7c6cb06b3fd"];
+function isOToken(OToken: Address): i32 {
+  for (let i = 0; i < OTokens.length; i++) {
+    if (OTokens[i] == OToken.toHexString()) return 1;
   }
   return 0;
 }
 
 export function handleTransfer(event: Transfer): void {
-  if (!isVault(event.params.to)) return;
+  if (!isOToken(event.params.to)) return;
 
   const id = event.transaction.hash.toHexString();
   let record = transaction.load(id);

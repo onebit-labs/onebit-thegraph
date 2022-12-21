@@ -2,21 +2,21 @@ import { Address } from "@graphprotocol/graph-ts";
 import { Transfer } from "../generated/USDT/ERC20";
 import { transaction } from "../generated/schema";
 
-const vaults: string[] = [
-  "0x249008409964a137ad50322bb03691b27347206c",
-  "0xc097dc3a530c4a2dbcf9799487fefa6f6dd483a3",
-  "0x888f74feb0f41cf8ec24b230ad7b1b527312af42",
-  "0xa0efcba5e7732c7552bd6a946de8857223c70f00",
+const OTokens: string[] = [
+  "0xf2f46bc53f6239c620384632ec6a482386999964",
+  "0x3979c568a0118dca44eef22396ac5d604ac73c46",
+  "0x6bed7692fa0eaf88c94c14586f0d0c45872f0510",
+  "0xd8c962825476622d9a370b567c2d95c323f5b168",
 ];
-function isVault(vault: Address): i32 {
-  for (let i = 0; i < vaults.length; i++) {
-    if (vaults[i] == vault.toHexString()) return 1;
+function isOToken(OToken: Address): i32 {
+  for (let i = 0; i < OTokens.length; i++) {
+    if (OTokens[i] == OToken.toHexString()) return 1;
   }
   return 0;
 }
 
 export function handleTransfer(event: Transfer): void {
-  if (!isVault(event.params.to)) return;
+  if (!isOToken(event.params.to)) return;
 
   const id = event.transaction.hash.toHexString();
   let record = transaction.load(id);
