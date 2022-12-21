@@ -62,7 +62,7 @@ export function handleDeposit(event: Deposit): void {
     record = new transaction(id);
   }
 
-  record.vault = event.transaction.to;
+  record.vault = event.address;
   record.type = 1;
   record.amount = event.params.amount;
   record.account = event.params.onBehalfOf;
@@ -72,7 +72,7 @@ export function handleDeposit(event: Deposit): void {
 
   record.save();
 
-  const vaultAddress = event.transaction.to;
+  const vaultAddress = event.address;
   if (vaultAddress) {
     const vaultId = vaultAddress.toHexString();
     let vaultRecord = vault.load(vaultId);
@@ -138,7 +138,7 @@ export function handleFundDeposit(event: FundDeposit): void {
     record = new transaction(id);
   }
 
-  record.vault = event.transaction.to;
+  record.vault = event.address;
   record.type = 3;
   record.amount = event.params.amount;
   record.account = event.params.from;
@@ -156,7 +156,7 @@ export function handleFundWithdraw(event: FundWithdraw): void {
     record = new transaction(id);
   }
 
-  record.vault = event.transaction.to;
+  record.vault = event.address;
   record.type = 3;
   record.amount = event.params.amount;
   record.account = event.params.to;
@@ -174,7 +174,7 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
     record = new netValue(id);
   }
 
-  record.vault = event.transaction.to;
+  record.vault = event.address;
   record.previousNetValue = event.params.previousNetValue;
   record.newNetValue = event.params.newNetValue;
   record.previousLiquidityIndex = event.params.previousLiquidityIndex;
@@ -184,7 +184,7 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
   record.reserveNormalizedIncome = BigInt.fromI32(0);
   record.save();
 
-  const vaultAddress = event.transaction.to;
+  const vaultAddress = event.address;
   if (!vaultAddress) return;
   const contract = Vault.bind(vaultAddress);
   record.reserveNormalizedIncome = contract.getReserveNormalizedIncome();
@@ -198,7 +198,7 @@ export function handleNetValueUpdated(event: NetValueUpdated): void {
 }
 
 export function handlePeriodInitialized(event: PeriodInitialized): void {
-  const vaultAddress = event.transaction.to;
+  const vaultAddress = event.address;
   if (!vaultAddress) return;
   const vaultId = vaultAddress.toHexString();
   const vaultRecord = vault.load(vaultId);
@@ -245,7 +245,7 @@ export function handleWithdraw(event: Withdraw): void {
     record = new transaction(id);
   }
 
-  record.vault = event.transaction.to;
+  record.vault = event.address;
   record.type = 2;
   record.amount = event.params.amount;
   record.account = event.params.to;
@@ -255,7 +255,7 @@ export function handleWithdraw(event: Withdraw): void {
 
   record.save();
 
-  const vaultAddress = event.transaction.to;
+  const vaultAddress = event.address;
   if (!vaultAddress) return;
   const depositorId = getDepositorId(vaultAddress, record.account);
   let depositorRecord = depositor.load(depositorId);
